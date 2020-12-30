@@ -15,6 +15,7 @@ void MerkelMain::init(){
     currentTime = orderBook.getEarliestTime();
 
     wallet.insertCurrency("BTC", 10);
+    generatePredictions();
 
     while(true){
         printMenu();
@@ -193,4 +194,12 @@ void MerkelMain::procesUserOption(int userOption){
     else if(userOption == 6){
         gotoNextTimeFrame();
     }
+}
+
+
+void MerkelMain::generatePredictions(){
+    std::vector<std::string> liveOrderBook = orderBook.getKnownProducts();
+    std::vector<double> maxBidValuesPerTimeframe;
+
+
 }
