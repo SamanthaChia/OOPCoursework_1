@@ -15,16 +15,17 @@ void MerkelMain::init(){
     currentTime = orderBook.getEarliestTime();
 
     wallet.insertCurrency("BTC", 10);
-    generatePredictions();
 
     while(true){
-        // printMenu();
-        // input = getUserOption();
-        // procesUserOption(input);
+        printMenu();
+        input = getUserOption();
+        procesUserOption(input);
     }
 }
 
 void MerkelMain::printMenu(){
+    generatePredictions();
+
     // 1 print help
     std::cout << "1: Print help. " << std::endl;
     // 2 print exchange stats
@@ -199,26 +200,62 @@ void MerkelMain::procesUserOption(int userOption){
 
 void MerkelMain::generatePredictions(){
     std::vector<std::string> liveOrderBook = orderBook.getKnownProducts();
-    std::vector<double> maxBidValuesPerTimeframe;
+    double predictedValue, newPredictedValue, actualValue,newb0Val,newb1Val;
+    double learningVal = 0.0001;
+    double error;
+    // logic if max bid is low = buy
 
-    // loop to get high price for bid in current
+
+    //predict bid first,using maximum bid (maximum bid should be low)
+    // y = b1*x + b0  (Also  known as y = mx +c )
+    // Assume b1 & b0 = 0
+    // y = 0(OrderBook::getHighPrice(entries)) + 0 
     for(std::string const& p : liveOrderBook){
+        double b1;
+        double b0;
         std::cout << "Product: " << p << std::endl;
         std::vector<OrderBookEntry> entries = orderBook.getOrders(OrderBookType::bid, p, currentTime );
+        if(currentTime == orderBook.getEarliestTime()){
+            b1 = 0;
+            b0 = 0;
+        } else{
+            b0 = newb0Val;
+            b1 = newb1Val;
+        }
+
+        // double b0 = newb0Val;
+        std::cout << "b0: " << b0 << " b1 : " << b1 << std::endl;
+
         std::cout << "Max bid: " << OrderBook::getHighPrice(entries) << std::endl;
+        predictedValue = b1 * OrderBook::getHighPrice(entries) + b0;
+        std::cout << b1 << " * " << OrderBook::getHighPrice(entries) << " + " << b0 << std::endl;
+        std::cout << "predictedValue: " << predictedValue << std::endl;
+
+        //Loss Function Implementation
+        error = predictedValue - OrderBook::getHighPrice(entries);
+        std::cout << error << " = " << predictedValue << " - " << OrderBook::getHighPrice(entries) << std::endl;
+        std::cout << "error: " << error << std::endl;
+
+        newb0Val = b0 - learningVal * error;
+        std::cout << "newb0Val : " << b0 << std::endl;
+        
+        newb1Val = b1 - learningVal * error;
+        std::cout << "newb1Val : " << b1 << std::endl;
+        
+        newPredictedValue = newb0Val + newb1Val * OrderBook::getHighPrice(entries);
+        std::cout << newPredictedValue << " = " << newb0Val << " + " << newb1Val << " * " << OrderBook::getHighPrice(entries) << std::endl;
+        std::cout << "newPredictedVal : " << newPredictedValue << std::endl;
+
+        std::cout << " " <<std::endl;
+
+        
     }
 
-    //predict ask first,using minimum ask (minimum ask should be high)
-    // y = mx + c
-    // Assume m & c =0, 
-    // y = 0(OrderBook::getLowPrice(entries)) + 0 
-
-    // BTC/USDT
     // Loss function e = p - y
     // e = 0 - 5352
     // e = -5352
 
-    // assume learning value is 0.01
+    // assume learning value is 0.0001
     // c = c - L * e
     // c = c - 0.01 * -5352
     // c = c - -53.52
