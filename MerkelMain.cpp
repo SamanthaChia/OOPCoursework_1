@@ -200,10 +200,12 @@ void MerkelMain::procesUserOption(int userOption){
 void MerkelMain::generatePredictions(){
     std::vector<std::string> liveOrderBook = orderBook.getKnownProducts();
     std::vector<double> maxBidValuesPerTimeframe;
+
+    // loop to get high price for bid in current
     for(std::string const& p : liveOrderBook){
         std::cout << "Product: " << p << std::endl;
-        std::vector<OrderBookEntry> entries = orderBook.getOrders(OrderBookType::ask, p, currentTime );
-        std::cout << "Min ask: " << OrderBook::getLowPrice(entries) << std::endl;
+        std::vector<OrderBookEntry> entries = orderBook.getOrders(OrderBookType::bid, p, currentTime );
+        std::cout << "Max bid: " << OrderBook::getHighPrice(entries) << std::endl;
     }
 
     //predict ask first,using minimum ask (minimum ask should be high)
