@@ -15,12 +15,12 @@ void MerkelMain::init(){
     currentTime = orderBook.getEarliestTime();
 
     wallet.insertCurrency("BTC", 10);
-    // generatePredictions();
+    generatePredictions();
 
     while(true){
-        printMenu();
-        input = getUserOption();
-        procesUserOption(input);
+        // printMenu();
+        // input = getUserOption();
+        // procesUserOption(input);
     }
 }
 
@@ -200,6 +200,25 @@ void MerkelMain::procesUserOption(int userOption){
 void MerkelMain::generatePredictions(){
     std::vector<std::string> liveOrderBook = orderBook.getKnownProducts();
     std::vector<double> maxBidValuesPerTimeframe;
+    for(std::string const& p : liveOrderBook){
+        std::cout << "Product: " << p << std::endl;
+        std::vector<OrderBookEntry> entries = orderBook.getOrders(OrderBookType::ask, p, currentTime );
+        std::cout << "Min ask: " << OrderBook::getLowPrice(entries) << std::endl;
+    }
 
+    //predict ask first,using minimum ask (minimum ask should be high)
+    // y = mx + c
+    // Assume m & c =0, 
+    // y = 0(OrderBook::getLowPrice(entries)) + 0 
 
+    // BTC/USDT
+    // Loss function e = p - y
+    // e = 0 - 5352
+    // e = -5352
+
+    // assume learning value is 0.01
+    // c = c - L * e
+    // c = c - 0.01 * -5352
+    // c = c - -53.52
+    // c = c + 53.52
 }
