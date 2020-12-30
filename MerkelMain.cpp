@@ -15,7 +15,7 @@ void MerkelMain::init(){
     currentTime = orderBook.getEarliestTime();
 
     wallet.insertCurrency("BTC", 10);
-    generatePredictions();
+    // generatePredictions();
 
     while(true){
         printMenu();
