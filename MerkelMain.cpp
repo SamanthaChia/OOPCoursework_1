@@ -232,10 +232,11 @@ void MerkelMain::automatePredictionBot(){
         generateDataHolder();
         currentTime = orderBook.getNextTime(currentTime);
     }
+    generatePredictions();
 }
 
 
-void MerkelMain::generatePredictions(){
+void MerkelMain::generatePredictions(std::string productName){
     std::vector<std::string> liveOrderBook = orderBook.getKnownProducts();
     std::vector<DataHolder> dataHolderBook = generateDataHolder();
 

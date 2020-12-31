@@ -24,9 +24,9 @@ class MerkelMain{
         void printWallet();
         void gotoNextTimeFrame();
         void procesUserOption(int userOption);
-        void generatePredictions();
+        void generatePredictions(std::string productName);
         std::vector<DataHolder> generateDataHolder();
-        std::string loopCurrentTimestamps();
+        void automatePredictionBot();
 
 
         std::string currentTime;
