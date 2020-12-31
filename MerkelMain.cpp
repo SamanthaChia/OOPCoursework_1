@@ -223,8 +223,15 @@ std::vector<DataHolder> MerkelMain::generateDataHolder(){
     return dataHolderBook;
 }
 
+// write new function to run through 10 timestamps, 
+// from the timestamp call generateDataHolder, 
+// separate into 5 different Types
+
 void MerkelMain::automatePredictionBot(){
-    
+    for(int i =0; i<10;i++){
+        generateDataHolder();
+        currentTime = orderBook.getNextTime(currentTime);
+    }
 }
 
 

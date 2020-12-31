@@ -26,7 +26,7 @@ class MerkelMain{
         void procesUserOption(int userOption);
         void generatePredictions();
         std::vector<DataHolder> generateDataHolder();
-        void automatePredictionBot();
+        std::string loopCurrentTimestamps();
 
 
         std::string currentTime;
