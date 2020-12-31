@@ -197,7 +197,8 @@ void MerkelMain::procesUserOption(int userOption){
     }
 }
 
-std::vector<DataHolder> MerkelMain::generateXandYVal(){
+std::vector<DataHolder> MerkelMain::generateDataHolder(){
+    std::vector<DataHolder> dataHolderBook;
     int askVol, bidVol;
     for(std::string const& p : orderBook.getKnownProducts()){
         std::vector<OrderBookEntry> askEntries = orderBook.getOrders(OrderBookType::ask, p, currentTime );
@@ -215,8 +216,9 @@ std::vector<DataHolder> MerkelMain::generateXandYVal(){
             avgBid,
             bidVol
         };
+        dataHolderBook.push_back(dh);
     }
-
+    return dataHolderBook;
 }
 
 
