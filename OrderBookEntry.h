@@ -31,7 +31,7 @@ class OrderBookEntry{
         double price;
         double amount;
         std::string timestamp;
-        std::string product;;
+        std::string product;
         OrderBookType orderType;
         std::string username;
 };
