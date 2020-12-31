@@ -2,9 +2,6 @@
 
 #include <vector>
 #include <string>
-#include "OrderBookEntry.h"
-#include "OrderBook.h"
-#include "Wallet.h"
 
 class DataHolder{
     public:

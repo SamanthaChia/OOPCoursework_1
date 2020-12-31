@@ -1,6 +1,7 @@
 #include "MerkelMain.h"
 #include "OrderBookEntry.h"
 #include "CSVReader.h"
+#include "DataHolder.h"
 #include <iostream>
 #include <vector>
 #include <limits>
@@ -15,7 +16,7 @@ void MerkelMain::init(){
     currentTime = orderBook.getEarliestTime();
 
     wallet.insertCurrency("BTC", 10);
-
+    generateDataHolder();
     while(true){
         printMenu();
         input = getUserOption();
@@ -24,7 +25,7 @@ void MerkelMain::init(){
 }
 
 void MerkelMain::printMenu(){
-    generatePredictions();
+    // generatePredictions();
 
     // 1 print help
     std::cout << "1: Print help. " << std::endl;
@@ -209,6 +210,7 @@ std::vector<DataHolder> MerkelMain::generateDataHolder(){
         
         bidVol = bidEntries.size();
         double avgBid = orderBook.getTotalPrice(bidEntries)/bidVol;
+
         DataHolder dh {
             p,
             avgAsk,
@@ -221,12 +223,20 @@ std::vector<DataHolder> MerkelMain::generateDataHolder(){
     return dataHolderBook;
 }
 
+void MerkelMain::automatePredictionBot(){
+    
+}
+
 
 void MerkelMain::generatePredictions(){
     std::vector<std::string> liveOrderBook = orderBook.getKnownProducts();
+    std::vector<DataHolder> dataHolderBook = generateDataHolder();
+
     double predictedValue, newPredictedValue, actualValue,newb0Val,newb1Val;
     double learningVal = 0.0001;
     double error;
+    double b1;
+    double b0;
     // logic if max bid is low = buy
 
 
@@ -235,8 +245,7 @@ void MerkelMain::generatePredictions(){
     // Assume b1 & b0 = 0
     // y = 0(OrderBook::getHighPrice(entries)) + 0 
     for(std::string const& p : liveOrderBook){
-        double b1;
-        double b0;
+
         std::cout << "Product: " << p << std::endl;
         std::vector<OrderBookEntry> entries = orderBook.getOrders(OrderBookType::bid, p, currentTime );
         if(currentTime == orderBook.getEarliestTime()){
