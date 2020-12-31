@@ -197,6 +197,28 @@ void MerkelMain::procesUserOption(int userOption){
     }
 }
 
+std::vector<DataHolder> MerkelMain::generateXandYVal(){
+    int askVol, bidVol;
+    for(std::string const& p : orderBook.getKnownProducts()){
+        std::vector<OrderBookEntry> askEntries = orderBook.getOrders(OrderBookType::ask, p, currentTime );
+        std::vector<OrderBookEntry> bidEntries = orderBook.getOrders(OrderBookType::bid, p, currentTime );
+
+        askVol = askEntries.size();
+        double avgAsk = orderBook.getTotalPrice(askEntries) /askVol;
+        
+        bidVol = bidEntries.size();
+        double avgBid = orderBook.getTotalPrice(bidEntries)/bidVol;
+        DataHolder dh {
+            p,
+            avgAsk,
+            askVol,
+            avgBid,
+            bidVol
+        };
+    }
+
+}
+
 
 void MerkelMain::generatePredictions(){
     std::vector<std::string> liveOrderBook = orderBook.getKnownProducts();
