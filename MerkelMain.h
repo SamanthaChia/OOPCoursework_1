@@ -24,6 +24,7 @@ class MerkelMain{
         void gotoNextTimeFrame();
         void procesUserOption(int userOption);
         void generatePredictions();
+        void generateXandYVal();
 
         std::string currentTime;
 
