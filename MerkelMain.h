@@ -4,6 +4,7 @@
 #include "OrderBookEntry.h"
 #include "OrderBook.h"
 #include "Wallet.h"
+#include "DataHolder.h"
 
 class MerkelMain{
 
@@ -24,7 +25,7 @@ class MerkelMain{
         void gotoNextTimeFrame();
         void procesUserOption(int userOption);
         void generatePredictions();
-        void generateXandYVal();
+        static std::vector<DataHolder> generateXandYVal();
 
         std::string currentTime;
 

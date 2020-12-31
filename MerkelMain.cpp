@@ -197,10 +197,6 @@ void MerkelMain::procesUserOption(int userOption){
     }
 }
 
-void MerkelMain::generateXandYVal(){
-    // x val use avgGrowth
-    // y val use ask/bid ratio
-}
 
 void MerkelMain::generatePredictions(){
     std::vector<std::string> liveOrderBook = orderBook.getKnownProducts();
