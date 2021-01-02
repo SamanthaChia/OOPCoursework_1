@@ -307,7 +307,6 @@ void MerkelMain::generatePredictions(std::vector<DataHolder> productData){
             error = predictedValue - y[idx];
             b0 = b0 - learningVal * error;
             b1 = b1 - learningVal * error * x[idx]; 
-            std::cout << "b0: " << b0 << " b1 : " << b1 << " error : " << error << std::endl;
 
             PredictB0B1 predictB0B1 {
                 error,
@@ -324,7 +323,6 @@ void MerkelMain::generatePredictions(std::vector<DataHolder> productData){
 
         std::cout << "After sorting = b0: " << errorVal[0].b0 << " b1 : " << errorVal[0].b1 << " error : " << errorVal[0].error << std::endl;
         
-        std::cout << " " <<std::endl;
         
         currentPrice = (productData[productData.size()-1].avgAsk + productData[productData.size()-1].avgBid)/2;
 
@@ -334,5 +332,9 @@ void MerkelMain::generatePredictions(std::vector<DataHolder> productData){
         predictedValue= errorVal[0].b0+ errorVal[0].b1 * x[x.size()-1] * currentPrice + currentPrice ;
 
         std::cout << "Predicted Value : " << predictedValue << std::endl;
+        std::cout << " " <<std::endl;
 
 }
+
+// When bidding usually want to take highest maximum bid.
+// predicted value = next value.
