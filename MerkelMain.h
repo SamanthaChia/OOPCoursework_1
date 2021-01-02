@@ -25,7 +25,7 @@ class MerkelMain{
         void gotoNextTimeFrame();
         void procesUserOption(int userOption);
         void generatePredictions(std::string productName);
-        std::vector<DataHolder> generateDataHolder();
+        void generateDataHolder();
         void automatePredictionBot();
 
 
