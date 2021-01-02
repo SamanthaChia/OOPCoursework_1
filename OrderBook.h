@@ -29,6 +29,8 @@ class OrderBook
 
         static double getHighPrice(std::vector<OrderBookEntry>& orders);
         static double getLowPrice(std::vector<OrderBookEntry>& orders);
+        static double getTotalPrice(std::vector<OrderBookEntry>& orders);
+        
     
     private:
         std::vector<OrderBookEntry> orders;

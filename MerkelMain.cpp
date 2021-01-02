@@ -1,9 +1,11 @@
 #include "MerkelMain.h"
 #include "OrderBookEntry.h"
 #include "CSVReader.h"
+#include "DataHolder.h"
 #include <iostream>
 #include <vector>
 #include <limits>
+#include <algorithm>
 
 MerkelMain::MerkelMain(){
 
@@ -15,7 +17,8 @@ void MerkelMain::init(){
     currentTime = orderBook.getEarliestTime();
 
     wallet.insertCurrency("BTC", 10);
-
+    // generateDataHolder();
+    automatePredictionBot();
     while(true){
         printMenu();
         input = getUserOption();
@@ -24,6 +27,8 @@ void MerkelMain::init(){
 }
 
 void MerkelMain::printMenu(){
+    // generatePredictions();
+
     // 1 print help
     std::cout << "1: Print help. " << std::endl;
     // 2 print exchange stats
@@ -193,4 +198,142 @@ void MerkelMain::procesUserOption(int userOption){
     else if(userOption == 6){
         gotoNextTimeFrame();
     }
+}
+
+void MerkelMain::generateDataHolder(){
+    std::vector<DataHolder> dataHolderBook;
+    int askVol, bidVol;
+    for(std::string const& p : orderBook.getKnownProducts()){
+        std::vector<OrderBookEntry> askEntries = orderBook.getOrders(OrderBookType::ask, p, currentTime );
+        std::vector<OrderBookEntry> bidEntries = orderBook.getOrders(OrderBookType::bid, p, currentTime );
+
+        askVol = askEntries.size();
+        double avgAsk = orderBook.getTotalPrice(askEntries) /askVol;
+        
+        bidVol = bidEntries.size();
+        double avgBid = orderBook.getTotalPrice(bidEntries)/bidVol;
+
+        DataHolder dh {
+            p,
+            avgAsk,
+            askVol,
+            avgBid,
+            bidVol
+        };
+
+		dataHolderBook.push_back(dh);
+
+        if(p == "BTC/USDT"){
+            btcUSDTDataHolder.push_back(dh);
+        }
+
+        if(p == "DOGE/BTC"){
+            dogeBTCDataHolder.push_back(dh);    
+        }
+
+        if(p == "DOGE/USDT"){
+            dogeUSDTDataHolder.push_back(dh);     
+        }
+
+        if(p == "ETH/BTC"){
+            ethBTCDataHolder.push_back(dh);
+        }
+
+        if(p == "ETH/USDT"){
+            ethUSDTDataHolder.push_back(dh);
+        }
+
+    }
+}
+
+void MerkelMain::automatePredictionBot(){
+    for(int i =0; i<10;){
+        generateDataHolder();
+        currentTime = orderBook.getNextTime(currentTime);
+        i++;
+    }
+    for(std::string const& p : orderBook.getKnownProducts()){
+        if(p == "BTC/USDT"){
+            generatePredictions(btcUSDTDataHolder);
+        }
+
+        if(p == "DOGE/BTC"){
+            generatePredictions(dogeBTCDataHolder);
+        }
+
+        if(p == "DOGE/USDT"){
+            generatePredictions(dogeUSDTDataHolder);
+        }
+
+        if(p == "ETH/BTC"){
+            generatePredictions(ethBTCDataHolder);
+        }
+
+        if(p == "ETH/USDT"){
+            generatePredictions(ethUSDTDataHolder);
+        }
+    }
+}
+
+void MerkelMain::generatePredictions(std::vector<DataHolder> productData){
+    std::vector<double> x,y,err;
+    std::vector<PredictB0B1> errorVal;
+    double predictedValue, error, b1, b0, currentPrice, askBidRatio, avgGrowthRatio;
+    double learningVal = 0.0001;
+
+
+    for(int i=0;i<productData.size()-1;++i)
+    {
+        askBidRatio = productData[i].askVol / productData[i].bidVol;
+        avgGrowthRatio = (productData[i].avgAsk - productData[i+1].avgAsk) + (productData[i].avgBid - productData[i+1].avgBid) /2;
+        // x = ratio between askVol and bidVol
+        // y = avg growth/loss ratio
+        x.push_back(askBidRatio);
+        y.push_back(avgGrowthRatio);
+    }
+
+
+        std::cout << "Product: " << productData[0].product << std::endl;
+        std::vector<OrderBookEntry> entries = orderBook.getOrders(OrderBookType::bid, productData[0].product, currentTime );
+        if(currentTime == orderBook.getEarliestTime()){
+            b1 = 0;
+            b0 = 0;
+        }
+
+        for(int i = 0; i < x.size() * 10; i++)
+        {
+            int idx = i % x.size();
+            predictedValue = b1 * x[idx] + b0;
+            error = predictedValue - y[idx];
+            b0 = b0 - learningVal * error;
+            b1 = b1 - learningVal * error * x[idx]; 
+            std::cout << "b0: " << b0 << " b1 : " << b1 << " error : " << error << std::endl;
+            err.push_back(error);
+
+            PredictB0B1 predictB0B1 {
+                error,
+                b0,
+                b1
+            };
+
+            errorVal.push_back(predictB0B1);
+        }
+
+        std::sort(errorVal.begin(),errorVal.end(),[](const PredictB0B1& lhs, const PredictB0B1& rhs){
+            return abs(lhs.error) < abs(rhs.error);
+        });
+
+        std::cout << "After sorting = b0: " << errorVal[0].b0 << " b1 : " << errorVal[0].b1 << " error : " << errorVal[0].error << std::endl;
+        
+        std::cout << " " <<std::endl;
+        
+        currentPrice = (productData[productData.size()-1].avgAsk + productData[productData.size()-1].avgBid)/2;
+
+        // x[x.size()-1] because latest x value,
+        // + currentPrice again because it will  only be % of the currentPrice
+        // predictedVal = newB0 + newB1 * x[x.size()-1] * currentPrice + currentPrice 
+        predictedValue= errorVal[0].b0+ errorVal[0].b1 * x[x.size()-1] * currentPrice + currentPrice ;
+
+        std::cout << "Predicted Value : " << predictedValue << std::endl;
+
 }

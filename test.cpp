@@ -43,7 +43,7 @@ std::vector<std::string> tokenise(std::string csvLine, char separator)
 
 int main()
 {
-    std::ifstream csvFile{"20200317.csv"};
+    std::ifstream csvFile{"20200601.csv"};
     std::string line;
     std::vector<std::string> tokens;
 

@@ -4,6 +4,8 @@
 #include "OrderBookEntry.h"
 #include "OrderBook.h"
 #include "Wallet.h"
+#include "PredictB0B1.h"
+#include "DataHolder.h"
 
 class MerkelMain{
 
@@ -23,11 +25,18 @@ class MerkelMain{
         void printWallet();
         void gotoNextTimeFrame();
         void procesUserOption(int userOption);
-        void generatePredictions();
+        void generatePredictions(std::vector<DataHolder> productData);
+        void generateDataHolder();
+        void automatePredictionBot();
 
         std::string currentTime;
+        std::vector<DataHolder> btcUSDTDataHolder;
+        std::vector<DataHolder> dogeBTCDataHolder;
+        std::vector<DataHolder> dogeUSDTDataHolder;
+        std::vector<DataHolder> ethBTCDataHolder;
+        std::vector<DataHolder> ethUSDTDataHolder;
 
-        OrderBook orderBook{"20200317.csv"};
+        OrderBook orderBook{"20200601.csv"};
 
         Wallet wallet;
 

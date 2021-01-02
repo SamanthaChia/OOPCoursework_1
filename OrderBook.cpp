@@ -63,6 +63,15 @@ double OrderBook::getLowPrice(std::vector<OrderBookEntry>& orders){
     return min;
 }
 
+double OrderBook::getTotalPrice(std::vector<OrderBookEntry>& orders){
+    double totalPrice = 0.0;
+    for(OrderBookEntry& e : orders){
+        totalPrice = totalPrice + e.price;
+    }
+    return totalPrice;
+}
+
+
 std::string OrderBook::getEarliestTime(){
     return orders[0].timestamp;
 }
