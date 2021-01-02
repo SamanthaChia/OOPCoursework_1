@@ -280,10 +280,9 @@ void MerkelMain::automatePredictionBot(){
 }
 
 void MerkelMain::generatePredictions(std::vector<DataHolder> productData){
-    std::vector<std::string> liveOrderBook = orderBook.getKnownProducts();
     std::vector<double> x,y,err;
     std::vector<PredictB0B1> errorVal;
-    double predictedValue, newPredictedValue, actualValue, error, b1, b0;
+    double predictedValue, error, b1, b0, currentPrice;
     double learningVal = 0.0001;
     // logic if max bid is low = buy
 
@@ -323,23 +322,18 @@ void MerkelMain::generatePredictions(std::vector<DataHolder> productData){
             errorVal.push_back(predictB0B1);
         }
 
-        std::sort(errorVal.begin(),errorVal.end(),[](const PredictB0B1 &lhs, const PredictB0B1 &rhs){
-            return abs(lhs.error)<abs(rhs.error);
+        std::sort(errorVal.begin(),errorVal.end(),[](const PredictB0B1& lhs, const PredictB0B1& rhs){
+            return abs(lhs.error) < abs(rhs.error);
         });
 
         std::cout << "After sorting = b0: " << errorVal[0].b0 << " b1 : " << errorVal[0].b1 << " error : " << errorVal[0].error << std::endl;
         
         std::cout << " " <<std::endl;
-
         
+        currentPrice = (productData[productData.size()-1].avgAsk + productData[productData.size()-1].avgBid)/2;
 
-    // Loss function e = p - y
-    // e = 0 - 5352
-    // e = -5352
+        predictedValue= errorVal[0].b0+ errorVal[0].b1 * x[x.size()-1] * currentPrice + currentPrice ;
 
-    // assume learning value is 0.0001
-    // c = c - L * e
-    // c = c - 0.01 * -5352
-    // c = c - -53.52
-    // c = c + 53.52
+        std::cout << "Predicted Value : " << predictedValue << std::endl;
+
 }
