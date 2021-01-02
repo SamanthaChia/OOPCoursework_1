@@ -237,6 +237,7 @@ void MerkelMain::generateDataHolder(){
         if(p == "ETH/USDT"){
             ethUSDTDataHolder.push_back(dh);
         }
+
     }
 }
 
@@ -248,7 +249,12 @@ void MerkelMain::automatePredictionBot(){
     for(int i =0; i<10;i++){
         generateDataHolder();
         currentTime = orderBook.getNextTime(currentTime);
+        for(std::string const& p : orderBook.getKnownProducts()){
+            generatePredictions(p);
+        }
     }
+
+    
 }
 
 
