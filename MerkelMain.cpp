@@ -2,10 +2,10 @@
 #include "OrderBookEntry.h"
 #include "CSVReader.h"
 #include "DataHolder.h"
-#include "PredictB0B1.h"
 #include <iostream>
 #include <vector>
 #include <limits>
+#include <algorithm>
 
 MerkelMain::MerkelMain(){
 
@@ -17,7 +17,8 @@ void MerkelMain::init(){
     currentTime = orderBook.getEarliestTime();
 
     wallet.insertCurrency("BTC", 10);
-    generateDataHolder();
+    // generateDataHolder();
+    automatePredictionBot();
     while(true){
         printMenu();
         input = getUserOption();
@@ -278,16 +279,9 @@ void MerkelMain::automatePredictionBot(){
     }
 }
 
-bool minAbsVal(double a, double b)
-{
-    double absA = abs(a-0);
-    double absB = abs(b-0);
-    return absA<absB;
-}
-
 void MerkelMain::generatePredictions(std::vector<DataHolder> productData){
     std::vector<std::string> liveOrderBook = orderBook.getKnownProducts();
-    std::vector<double> x,y;
+    std::vector<double> x,y,err;
     std::vector<PredictB0B1> errorVal;
     double predictedValue, newPredictedValue, actualValue, error, b1, b0;
     double learningVal = 0.0001;
@@ -318,6 +312,7 @@ void MerkelMain::generatePredictions(std::vector<DataHolder> productData){
             b0 = b0 - learningVal * error;
             b1 = b1 - learningVal * error * x[idx]; 
             std::cout << "b0: " << b0 << " b1 : " << b1 << " error : " << error << std::endl;
+            err.push_back(error);
 
             PredictB0B1 predictB0B1 {
                 error,
@@ -328,7 +323,12 @@ void MerkelMain::generatePredictions(std::vector<DataHolder> productData){
             errorVal.push_back(predictB0B1);
         }
 
+        std::sort(errorVal.begin(),errorVal.end(),[](const PredictB0B1 &lhs, const PredictB0B1 &rhs){
+            return abs(lhs.error)<abs(rhs.error);
+        });
 
+        std::cout << "After sorting = b0: " << errorVal[0].b0 << " b1 : " << errorVal[0].b1 << " error : " << errorVal[0].error << std::endl;
+        
         std::cout << " " <<std::endl;
 
         
