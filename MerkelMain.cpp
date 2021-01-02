@@ -246,10 +246,6 @@ void MerkelMain::generateDataHolder(){
     }
 }
 
-// write new function to run through 10 timestamps, 
-// from the timestamp call generateDataHolder, 
-// separate into 5 different Types
-
 void MerkelMain::automatePredictionBot(){
     for(int i =0; i<10;){
         generateDataHolder();
@@ -282,20 +278,21 @@ void MerkelMain::automatePredictionBot(){
 void MerkelMain::generatePredictions(std::vector<DataHolder> productData){
     std::vector<double> x,y,err;
     std::vector<PredictB0B1> errorVal;
-    double predictedValue, error, b1, b0, currentPrice;
+    double predictedValue, error, b1, b0, currentPrice, askBidRatio, avgGrowthRatio;
     double learningVal = 0.0001;
-    // logic if max bid is low = buy
+
 
     for(int i=0;i<productData.size()-1;++i)
     {
-        x.push_back(productData[i].askVol / productData[i].bidVol);
-        y.push_back((productData[i].avgAsk - productData[i+1].avgAsk) + (productData[i].avgBid - productData[i+1].avgBid) /2);
+        askBidRatio = productData[i].askVol / productData[i].bidVol;
+        avgGrowthRatio = (productData[i].avgAsk - productData[i+1].avgAsk) + (productData[i].avgBid - productData[i+1].avgBid) /2;
+        // x = ratio between askVol and bidVol
+        // y = avg growth/loss ratio
+        x.push_back(askBidRatio);
+        y.push_back(avgGrowthRatio);
     }
 
-    //predict bid first,using maximum bid (maximum bid should be low)
-    // y = b1*x + b0  (Also  known as y = mx +c )
-    // Assume b1 & b0 = 0
-    // y = 0(OrderBook::getHighPrice(entries)) + 0 
+
         std::cout << "Product: " << productData[0].product << std::endl;
         std::vector<OrderBookEntry> entries = orderBook.getOrders(OrderBookType::bid, productData[0].product, currentTime );
         if(currentTime == orderBook.getEarliestTime()){
@@ -332,6 +329,9 @@ void MerkelMain::generatePredictions(std::vector<DataHolder> productData){
         
         currentPrice = (productData[productData.size()-1].avgAsk + productData[productData.size()-1].avgBid)/2;
 
+        // x[x.size()-1] because latest x value,
+        // + currentPrice again because it will  only be % of the currentPrice
+        // predictedVal = newB0 + newB1 * x[x.size()-1] * currentPrice + currentPrice 
         predictedValue= errorVal[0].b0+ errorVal[0].b1 * x[x.size()-1] * currentPrice + currentPrice ;
 
         std::cout << "Predicted Value : " << predictedValue << std::endl;
