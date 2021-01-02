@@ -198,14 +198,7 @@ void MerkelMain::procesUserOption(int userOption){
     }
 }
 
-std::vector<DataHolder> MerkelMain::generateDataHolder(){
-    std::vector<DataHolder> btcUSDTDataHolder;
-    std::vector<DataHolder> dogeBTCDataHolder;
-    std::vector<DataHolder> dogeUSDTDataHolder;
-    std::vector<DataHolder> ethBTCDataHolder;
-    std::vector<DataHolder> ethUSDTDataHolder;
-
-    std::vector<DataHolder> dataHolderBook;
+void MerkelMain::generateDataHolder(){
     int askVol, bidVol;
     for(std::string const& p : orderBook.getKnownProducts()){
         std::vector<OrderBookEntry> askEntries = orderBook.getOrders(OrderBookType::ask, p, currentTime );
@@ -224,9 +217,27 @@ std::vector<DataHolder> MerkelMain::generateDataHolder(){
             avgBid,
             bidVol
         };
-        dataHolderBook.push_back(dh);
+
+        if(p == "BTC/USDT"){
+             btcUSDTDataHolder.push_back(dh);
+        }
+
+        if(p == "DOGE/BTC"){
+            dogeBTCDataHolder.push_back(dh);    
+        }
+
+        if(p == "DOGE/USDT"){
+            dogeUSDTDataHolder.push_back(dh);     
+        }
+
+        if(p == "ETH/BTC"){
+            ethBTCDataHolder.push_back(dh);
+        }
+
+        if(p == "ETH/USDT"){
+            ethUSDTDataHolder.push_back(dh);
+        }
     }
-    return dataHolderBook;
 }
 
 // write new function to run through 10 timestamps, 
@@ -235,7 +246,7 @@ std::vector<DataHolder> MerkelMain::generateDataHolder(){
 
 void MerkelMain::automatePredictionBot(){
     for(int i =0; i<10;i++){
-        std::vector<DataHolder> dh = generateDataHolder();
+        generateDataHolder();
         currentTime = orderBook.getNextTime(currentTime);
     }
 }
@@ -243,7 +254,7 @@ void MerkelMain::automatePredictionBot(){
 
 void MerkelMain::generatePredictions(std::string productName){
     std::vector<std::string> liveOrderBook = orderBook.getKnownProducts();
-    std::vector<DataHolder> dataHolderBook = generateDataHolder();
+    // std::vector<DataHolder> dataHolderBook = generateDataHolder();
 
     double predictedValue, newPredictedValue, actualValue,newb0Val,newb1Val;
     double learningVal = 0.0001;

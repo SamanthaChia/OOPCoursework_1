@@ -30,6 +30,11 @@ class MerkelMain{
 
 
         std::string currentTime;
+        std::vector<DataHolder> btcUSDTDataHolder;
+        std::vector<DataHolder> dogeBTCDataHolder;
+        std::vector<DataHolder> dogeUSDTDataHolder;
+        std::vector<DataHolder> ethBTCDataHolder;
+        std::vector<DataHolder> ethUSDTDataHolder;
 
         OrderBook orderBook{"20200601.csv"};
 
