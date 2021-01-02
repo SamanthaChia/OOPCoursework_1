@@ -276,7 +276,7 @@ void MerkelMain::automatePredictionBot(){
 }
 
 void MerkelMain::generatePredictions(std::vector<DataHolder> productData){
-    std::vector<double> x,y,err;
+    std::vector<double> x,y;
     std::vector<PredictB0B1> errorVal;
     double predictedValue, error, b1, b0, currentPrice, askBidRatio, avgGrowthRatio;
     double learningVal = 0.0001;
@@ -308,7 +308,6 @@ void MerkelMain::generatePredictions(std::vector<DataHolder> productData){
             b0 = b0 - learningVal * error;
             b1 = b1 - learningVal * error * x[idx]; 
             std::cout << "b0: " << b0 << " b1 : " << b1 << " error : " << error << std::endl;
-            err.push_back(error);
 
             PredictB0B1 predictB0B1 {
                 error,
