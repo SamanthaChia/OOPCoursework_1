@@ -27,7 +27,7 @@ class MerkelMain{
         void generatePredictions(std::vector<DataHolder> productData);
         void generateDataHolder();
         void automatePredictionBot();
-
+        bool minAbsVal(double a, double b);
 
         std::string currentTime;
         std::vector<DataHolder> btcUSDTDataHolder;

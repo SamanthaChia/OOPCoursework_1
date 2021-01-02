@@ -2,6 +2,7 @@
 #include "OrderBookEntry.h"
 #include "CSVReader.h"
 #include "DataHolder.h"
+#include "PredictB0B1.h"
 #include <iostream>
 #include <vector>
 #include <limits>
@@ -277,11 +278,17 @@ void MerkelMain::automatePredictionBot(){
     }
 }
 
+bool minAbsVal(double a, double b)
+{
+    double absA = abs(a-0);
+    double absB = abs(b-0);
+    return absA<absB;
+}
 
 void MerkelMain::generatePredictions(std::vector<DataHolder> productData){
     std::vector<std::string> liveOrderBook = orderBook.getKnownProducts();
-    std::vector<double> x,y,err;
-    std::map<double, double> errorb0, errorb1;
+    std::vector<double> x,y;
+    std::vector<PredictB0B1> errorVal;
     double predictedValue, newPredictedValue, actualValue, error, b1, b0;
     double learningVal = 0.0001;
     // logic if max bid is low = buy
@@ -311,9 +318,14 @@ void MerkelMain::generatePredictions(std::vector<DataHolder> productData){
             b0 = b0 - learningVal * error;
             b1 = b1 - learningVal * error * x[idx]; 
             std::cout << "b0: " << b0 << " b1 : " << b1 << " error : " << error << std::endl;
-            err.push_back(error);
-            errorb0[error] = b0;
-            errorb1[error] = b1;
+
+            PredictB0B1 predictB0B1 {
+                error,
+                b0,
+                b1
+            };
+
+            errorVal.push_back(predictB0B1);
         }
 
 
