@@ -280,12 +280,10 @@ void MerkelMain::automatePredictionBot(){
 
 void MerkelMain::generatePredictions(std::vector<DataHolder> productData){
     std::vector<std::string> liveOrderBook = orderBook.getKnownProducts();
-    std::vector<double> x,y;
-    double predictedValue, newPredictedValue, actualValue,newb0Val,newb1Val;
+    std::vector<double> x,y,err;
+    std::map<double, double> errorb0, errorb1;
+    double predictedValue, newPredictedValue, actualValue, error, b1, b0;
     double learningVal = 0.0001;
-    double error;
-    double b1;
-    double b0;
     // logic if max bid is low = buy
 
     for(int i=0;i<productData.size()-1;++i)
@@ -293,7 +291,6 @@ void MerkelMain::generatePredictions(std::vector<DataHolder> productData){
         x.push_back(productData[i].askVol / productData[i].bidVol);
         y.push_back((productData[i].avgAsk - productData[i+1].avgAsk) + (productData[i].avgBid - productData[i+1].avgBid) /2);
     }
-
 
     //predict bid first,using maximum bid (maximum bid should be low)
     // y = b1*x + b0  (Also  known as y = mx +c )
@@ -304,33 +301,21 @@ void MerkelMain::generatePredictions(std::vector<DataHolder> productData){
         if(currentTime == orderBook.getEarliestTime()){
             b1 = 0;
             b0 = 0;
-        } else{
-            b0 = newb0Val;
-            b1 = newb1Val;
         }
 
-        // double b0 = newb0Val;
-        std::cout << "b0: " << b0 << " b1 : " << b1 << std::endl;
+        for(int i = 0; i < x.size() * 10; i++)
+        {
+            int idx = i % x.size();
+            predictedValue = b1 * x[idx] + b0;
+            error = predictedValue - y[idx];
+            b0 = b0 - learningVal * error;
+            b1 = b1 - learningVal * error * x[idx]; 
+            std::cout << "b0: " << b0 << " b1 : " << b1 << " error : " << error << std::endl;
+            err.push_back(error);
+            errorb0[error] = b0;
+            errorb1[error] = b1;
+        }
 
-        std::cout << "Max bid: " << OrderBook::getHighPrice(entries) << std::endl;
-        predictedValue = b1 * OrderBook::getHighPrice(entries) + b0;
-        std::cout << b1 << " * " << OrderBook::getHighPrice(entries) << " + " << b0 << std::endl;
-        std::cout << "predictedValue: " << predictedValue << std::endl;
-
-        //Loss Function Implementation
-        error = predictedValue - OrderBook::getHighPrice(entries);
-        std::cout << error << " = " << predictedValue << " - " << OrderBook::getHighPrice(entries) << std::endl;
-        std::cout << "error: " << error << std::endl;
-
-        newb0Val = b0 - learningVal * error;
-        std::cout << "newb0Val : " << b0 << std::endl;
-        
-        newb1Val = b1 - learningVal * error;
-        std::cout << "newb1Val : " << b1 << std::endl;
-        
-        newPredictedValue = newb0Val + newb1Val * OrderBook::getHighPrice(entries);
-        std::cout << newPredictedValue << " = " << newb0Val << " + " << newb1Val << " * " << OrderBook::getHighPrice(entries) << std::endl;
-        std::cout << "newPredictedVal : " << newPredictedValue << std::endl;
 
         std::cout << " " <<std::endl;
 
