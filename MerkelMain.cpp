@@ -199,6 +199,12 @@ void MerkelMain::procesUserOption(int userOption){
 }
 
 std::vector<DataHolder> MerkelMain::generateDataHolder(){
+    std::vector<DataHolder> btcUSDTDataHolder;
+    std::vector<DataHolder> dogeBTCDataHolder;
+    std::vector<DataHolder> dogeUSDTDataHolder;
+    std::vector<DataHolder> ethBTCDataHolder;
+    std::vector<DataHolder> ethUSDTDataHolder;
+
     std::vector<DataHolder> dataHolderBook;
     int askVol, bidVol;
     for(std::string const& p : orderBook.getKnownProducts()){
@@ -229,10 +235,9 @@ std::vector<DataHolder> MerkelMain::generateDataHolder(){
 
 void MerkelMain::automatePredictionBot(){
     for(int i =0; i<10;i++){
-        generateDataHolder();
+        std::vector<DataHolder> dh = generateDataHolder();
         currentTime = orderBook.getNextTime(currentTime);
     }
-    generatePredictions();
 }
 
 
