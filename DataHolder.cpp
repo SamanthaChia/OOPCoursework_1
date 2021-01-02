@@ -16,21 +16,5 @@ DataHolder::DataHolder(
 
 }
 
-double DataHolder::getAvgAsk(std::vector<DataHolder>& data){
-    return data[0].avgAsk;
-}
-
-double DataHolder::getAvgBid(std::vector<DataHolder>& data){
-    return data[0].avgBid;
-}
-
-int DataHolder::getAskVol(std::vector<DataHolder>& data){
-    return data[0].askVol;
-}
-
-int DataHolder::getBidVol(std::vector<DataHolder>& data){
-    return data[0].bidVol;
-}
-
 
     

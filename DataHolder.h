@@ -18,8 +18,5 @@ class DataHolder{
         double avgBid;
         int askVol;
         int bidVol;
-        static double getAvgAsk(std::vector<DataHolder>& data);
-        static double getAvgBid(std::vector<DataHolder>& data);
-        static int getAskVol(std::vector<DataHolder>& data);
-        static int getBidVol(std::vector<DataHolder>& data);
+
 };

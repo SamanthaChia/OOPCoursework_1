@@ -198,7 +198,7 @@ void MerkelMain::procesUserOption(int userOption){
     }
 }
 
-std::vector<DataHolder> MerkelMain::generateDataHolder(){
+void MerkelMain::generateDataHolder(){
     std::vector<DataHolder> dataHolderBook;
     int askVol, bidVol;
     for(std::string const& p : orderBook.getKnownProducts()){
@@ -242,7 +242,6 @@ std::vector<DataHolder> MerkelMain::generateDataHolder(){
         }
 
     }
-    return dataHolderBook;
 }
 
 // write new function to run through 10 timestamps, 
@@ -256,16 +255,32 @@ void MerkelMain::automatePredictionBot(){
         i++;
     }
     for(std::string const& p : orderBook.getKnownProducts()){
-        generatePredictions(p);
+        if(p == "BTC/USDT"){
+            generatePredictions(btcUSDTDataHolder);
+        }
+
+        if(p == "DOGE/BTC"){
+            generatePredictions(dogeBTCDataHolder);
+        }
+
+        if(p == "DOGE/USDT"){
+            generatePredictions(dogeUSDTDataHolder);
+        }
+
+        if(p == "ETH/BTC"){
+            generatePredictions(ethBTCDataHolder);
+        }
+
+        if(p == "ETH/USDT"){
+            generatePredictions(ethUSDTDataHolder);
+        }
     }
 }
 
 
-
-void MerkelMain::generatePredictions(std::string productName){
+void MerkelMain::generatePredictions(std::vector<DataHolder> productData){
     std::vector<std::string> liveOrderBook = orderBook.getKnownProducts();
-    std::vector<DataHolder> dataHolderBook = generateDataHolder();
-
+    std::vector<double> x,y;
     double predictedValue, newPredictedValue, actualValue,newb0Val,newb1Val;
     double learningVal = 0.0001;
     double error;
@@ -273,14 +288,19 @@ void MerkelMain::generatePredictions(std::string productName){
     double b0;
     // logic if max bid is low = buy
 
+    for(int i=0;i<productData.size()-1;++i)
+    {
+        x.push_back(productData[i].askVol / productData[i].bidVol);
+        y.push_back((productData[i].avgAsk - productData[i+1].avgAsk) + (productData[i].avgBid - productData[i+1].avgBid) /2);
+    }
+
 
     //predict bid first,using maximum bid (maximum bid should be low)
     // y = b1*x + b0  (Also  known as y = mx +c )
     // Assume b1 & b0 = 0
     // y = 0(OrderBook::getHighPrice(entries)) + 0 
-
-        std::cout << "Product: " << productName << std::endl;
-        std::vector<OrderBookEntry> entries = orderBook.getOrders(OrderBookType::bid, productName, currentTime );
+        std::cout << "Product: " << productData[0].product << std::endl;
+        std::vector<OrderBookEntry> entries = orderBook.getOrders(OrderBookType::bid, productData[0].product, currentTime );
         if(currentTime == orderBook.getEarliestTime()){
             b1 = 0;
             b0 = 0;
