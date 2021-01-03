@@ -276,7 +276,7 @@ void MerkelMain::automatePredictionBot(){
 void MerkelMain::generatePredictions(std::vector<DataHolder> productData){
     std::vector<double> x,y;
     std::vector<PredictB0B1> errorVal;
-    double error, b1, b0, currentPrice, askBidRatio, avgGrowthRatio;
+    double predictedValue, error, b1, b0, currentPrice, askBidRatio, avgGrowthRatio;
     double learningVal = 0.0001;
 
 
@@ -319,7 +319,7 @@ void MerkelMain::generatePredictions(std::vector<DataHolder> productData){
             return abs(lhs.error) < abs(rhs.error);
         });
 
-        // std::cout << "After sorting = b0: " << errorVal[0].b0 << " b1 : " << errorVal[0].b1 << " error : " << errorVal[0].error << std::endl;
+        std::cout << "After sorting = b0: " << errorVal[0].b0 << " b1 : " << errorVal[0].b1 << " error : " << errorVal[0].error << std::endl;
         
         
         currentPrice = (productData[productData.size()-1].avgAsk + productData[productData.size()-1].avgBid)/2;
@@ -336,5 +336,3 @@ void MerkelMain::generatePredictions(std::vector<DataHolder> productData){
 
 // When bidding usually want to take highest maximum bid.
 // predicted value = next value.
-void MerkelMain::generateBidWithPredictions(){
-}
