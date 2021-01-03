@@ -17,7 +17,6 @@ void MerkelMain::init(){
     currentTime = orderBook.getEarliestTime();
 
     wallet.insertCurrency("BTC", 10);
-    // generateDataHolder();
     automatePredictionBot();
     while(true){
         printMenu();
@@ -27,7 +26,6 @@ void MerkelMain::init(){
 }
 
 void MerkelMain::printMenu(){
-    // generatePredictions();
 
     // 1 print help
     std::cout << "1: Print help. " << std::endl;
@@ -338,3 +336,6 @@ void MerkelMain::generatePredictions(std::vector<DataHolder> productData){
 
 // When bidding usually want to take highest maximum bid.
 // predicted value = next value.
+void MerkelMain::generateBidWithPredictions(){
+    
+}
