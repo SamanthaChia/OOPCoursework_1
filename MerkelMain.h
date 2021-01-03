@@ -42,6 +42,7 @@ class MerkelMain{
         void generateBidWithPredictions();
 
         std::string currentTime;
+        double predictedValue;
         std::vector<DataHolder> btcUSDTDataHolder;
         std::vector<DataHolder> dogeBTCDataHolder;
         std::vector<DataHolder> dogeUSDTDataHolder;
