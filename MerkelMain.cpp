@@ -356,4 +356,22 @@ void MerkelMain::generateBidWithPredictions(){
 
     ethUSDTPredictions = generatePredictions(btcUSDTDataHolder);
     ethUSDTEntries = orderBook.getOrders(OrderBookType::bid, "ETH/USDT", currentTime );
+
+    if(btcUSDTPredictions < OrderBook::getHighPrice(btcUSDTEntries)){
+        OrderBookEntry obe {
+                btcUSDTPredictions,
+                1,
+                currentTime,
+                "BTC/USDT",
+                OrderBookType::bid
+        };
+        obe.username = "simuser";
+
+    if(wallet.canFulfillOrder(obe))
+    {
+        std::cout<<"Wallet looks good. " << std::endl;
+        orderBook.insertOrder(obe);
+    }
+    }
+    
 }
