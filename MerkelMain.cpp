@@ -273,7 +273,8 @@ void MerkelMain::automatePredictionBot(){
     }
 }
 
-void MerkelMain::generatePredictions(std::vector<DataHolder> productData){
+//used to be void changed to double to return predictedValue
+double MerkelMain::generatePredictions(std::vector<DataHolder> productData){
     std::vector<double> x,y;
     std::vector<PredictB0B1> errorVal;
     double predictedValue, error, b1, b0, currentPrice, askBidRatio, avgGrowthRatio;
@@ -332,7 +333,27 @@ void MerkelMain::generatePredictions(std::vector<DataHolder> productData){
         std::cout << "Predicted Value : " << predictedValue << std::endl;
         std::cout << " " <<std::endl;
 
+        return predictedValue;
 }
 
 // When bidding usually want to take highest maximum bid.
 // predicted value = next value.
+void MerkelMain::generateBidWithPredictions(){
+    double btcUSDTPredictions, dogeBTCPredictions, dogeUSDTPredictions, ethBTCPredictions, ethUSDTPredictions;
+    std::vector<OrderBookEntry> btcUSDTEntries, dogeBTCEntries, dogeUSDTEntries, ethBTCEntries, ethUSDTEntries;
+
+    btcUSDTPredictions = generatePredictions(btcUSDTDataHolder);
+    btcUSDTEntries = orderBook.getOrders(OrderBookType::bid, "BTC/USDT", currentTime );
+
+    dogeBTCPredictions = generatePredictions(btcUSDTDataHolder);
+    dogeBTCEntries = orderBook.getOrders(OrderBookType::bid, "DOGE/BTC", currentTime );
+
+    dogeUSDTPredictions = generatePredictions(btcUSDTDataHolder);
+    dogeUSDTEntries = orderBook.getOrders(OrderBookType::bid, "DOGE/USDT", currentTime );
+
+    ethBTCPredictions = generatePredictions(btcUSDTDataHolder);
+    ethBTCEntries = orderBook.getOrders(OrderBookType::bid, "ETH/BTC", currentTime );
+
+    ethUSDTPredictions = generatePredictions(btcUSDTDataHolder);
+    ethUSDTEntries = orderBook.getOrders(OrderBookType::bid, "ETH/USDT", currentTime );
+}
