@@ -351,19 +351,16 @@ void MerkelMain::generateBidWithPredictions(std::string productName){
         if(productName == "BTC/USDT"){
             predictions = generatePredictions(btcUSDTDataHolder);
             entries = orderBook.getOrders(OrderBookType::ask, "BTC/USDT", currentTime );
-
         }
 
         if(productName == "DOGE/BTC"){
             predictions = generatePredictions(dogeBTCDataHolder);
             entries = orderBook.getOrders(OrderBookType::ask, "DOGE/BTC", currentTime );
-
         }
 
         if(productName == "DOGE/USDT"){
             predictions = generatePredictions(dogeUSDTDataHolder);
             entries = orderBook.getOrders(OrderBookType::ask, "DOGE/USDT", currentTime );
-
         }
 
         if(productName == "ETH/BTC"){
@@ -434,16 +431,18 @@ void MerkelMain::generateBidWithPredictions(std::string productName){
         }  
     }
     
-    // //matching
-    // std::vector<OrderBookEntry> sales = orderBook.matchAsksToBids(productName, currentTime);
-    // for(OrderBookEntry& sale : sales)
-    // {   
-    //     if(sale.username == "simuser")
-    //     {
-    //         wallet.processSale(sale);
-    //     }
-    // }
+    //matching
+    std::vector<OrderBookEntry> sales = orderBook.matchAsksToBids(productName, currentTime);
+    for(OrderBookEntry& sale : sales)
+    {   
+        if(sale.username == "simuser")
+        {
+            wallet.processSale(sale);
+        }
+    }
 
     // currentTime = orderBook.getNextTime(currentTime);
     
 }
+
+//remove the bid if a sale is not made. = matchAsksToBids fail
