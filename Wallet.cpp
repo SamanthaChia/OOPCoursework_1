@@ -74,14 +74,6 @@ std::string Wallet::toString()
     return s;
 }
 
-// double Wallet::walletValue(){
-//     double amount;
-//     for(std::pair<std::string,double> pair : currencies){
-//         std::string currency = pair.first;
-//         amount = pair.second;
-//     }
-//     return amount;
-// }
 
 bool Wallet::canFulfillOrder(OrderBookEntry order)
 {
