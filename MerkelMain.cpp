@@ -116,39 +116,40 @@ void MerkelMain::enterAsk(){
 }
 
 void MerkelMain::enterBid(){
-    std::cout << "Make an bid - enter the amount: product, price, amount, eg ETH/BTC, 200,0.5 " << std::endl;
-    std::string input;
-    std::getline(std::cin, input);
+    // std::cout << "Make an bid - enter the amount: product, price, amount, eg ETH/BTC, 200,0.5 " << std::endl;
+    // std::string input;
+    // std::getline(std::cin, input);
 
-    std::vector<std::string> tokens = CSVReader::tokenise(input,',');
-    if(tokens.size() != 3){
-        std::cout << "MerkelMain::enterBid Bad input " << std::endl;
-    }
+    // std::vector<std::string> tokens = CSVReader::tokenise(input,',');
+    // if(tokens.size() != 3){
+    //     std::cout << "MerkelMain::enterBid Bad input " << std::endl;
+    // }
 
-    else{
-        try{
-            OrderBookEntry obe = CSVReader::stringsToOBE(
-                tokens[1],
-                tokens[2],
-                currentTime,
-                tokens[0],
-                OrderBookType::bid
-            );
-            obe.username = "simuser";
+    // else{
+    //     try{
+    //         OrderBookEntry obe = CSVReader::stringsToOBE(
+    //             tokens[1],
+    //             tokens[2],
+    //             currentTime,
+    //             tokens[0],
+    //             OrderBookType::bid
+    //         );
+    //         obe.username = "simuser";
 
-            if(wallet.canFulfillOrder(obe))
-            {
-                std::cout<<"Wallet looks good. " << std::endl;
-                orderBook.insertOrder(obe);
-            }
-            else{
-                std::cout<< "Wallet has insufficient funds. " << std::endl;
-            }
-        }catch(const std::exception& e)
-        {
-            std::cout << "MerkelMain::enterBid Bad input " << std::endl;
-        }
-    }
+    //         if(wallet.canFulfillOrder(obe))
+    //         {
+    //             std::cout<<"Wallet looks good. " << std::endl;
+    //             orderBook.insertOrder(obe);
+    //         }
+    //         else{
+    //             std::cout<< "Wallet has insufficient funds. " << std::endl;
+    //         }
+    //     }catch(const std::exception& e)
+    //     {
+    //         std::cout << "MerkelMain::enterBid Bad input " << std::endl;
+    //     }
+    // }
+    generateBidWithPredictions("ETH/BTC");
 }
 
 void MerkelMain::printWallet(){
@@ -339,11 +340,11 @@ double MerkelMain::generatePredictions(std::vector<DataHolder> productData){
 // When bidding usually want to take highest maximum bid.
 // predicted value = next value.
 void MerkelMain::generateBidWithPredictions(std::string productName){
-    double predictions;
+    double predictions, lowerThanPrediction, lowestPrice, bidAmount, walletAmount;
+
     std::vector<OrderBookEntry> entries;
 
         if(productName == "BTC/USDT"){
-            // generatePredictions(btcUSDTDataHolder);
             predictions = generatePredictions(btcUSDTDataHolder);
             entries = orderBook.getOrders(OrderBookType::bid, "BTC/USDT", currentTime );
 
@@ -374,32 +375,56 @@ void MerkelMain::generateBidWithPredictions(std::string productName){
         }
 
         for(OrderBookEntry entry : entries){
-            double lowerThanPrediction, lowestPrice;
             //if entry Price is lower than prediction price, set it as that it is the lower than prediction
             if(entry.price < predictions) {
                 lowerThanPrediction = entry.price;
                 //after checking that entry price is lower than prediction, and theres a new entry price thats lower, set that as lowestPrice.
                 if(entry.price <= lowerThanPrediction){
                     lowestPrice = entry.price;
+                    bidAmount = entry.amount;
                 }
             }
         }
+        
+        OrderBookEntry obe {
+                lowestPrice,
+                bidAmount,
+                currentTime,
+                "BTC/USDT",
+                OrderBookType::bid
+        };
+        obe.username = "simuser";
 
-    // if(btcUSDTPredictions < OrderBook::getHighPrice(btcUSDTEntries)){
-    //     OrderBookEntry obe {
-    //             btcUSDTPredictions,
-    //             1,
-    //             currentTime,
-    //             "BTC/USDT",
-    //             OrderBookType::bid
-    //     };
-    //     obe.username = "simuser";
-
-    // if(wallet.canFulfillOrder(obe))
-    // {
-    //     std::cout<<"Wallet looks good. " << std::endl;
-    //     orderBook.insertOrder(obe);
-    // }
-    // }
+    if(wallet.canFulfillOrder(obe))
+    {
+        std::cout<<"Wallet looks good. " << std::endl;
+        orderBook.insertOrder(obe);
+    } else{
+        std::cout<<"Wallet unable to handle with max Amount offered in order List, taking max amount you can order. " <<std::endl;
+        std::vector<std::string> currs = CSVReader::tokenise(productName, '/');
+        std::string currency = currs[1];
+        for(std::pair<std::string,double> pair : wallet.currencies){
+            std::string currencyNameInWallet = pair.first;
+            if(currencyNameInWallet == currency)
+            {
+                walletAmount = pair.second;
+                bidAmount = walletAmount/lowestPrice;
+            } else{
+                std::cout<< "Wallet has insufficient funds. " << std::endl;
+            }
+        }
+        OrderBookEntry obe {
+                lowestPrice,
+                bidAmount,
+                currentTime,
+                "BTC/USDT",
+                OrderBookType::bid
+        };
+        if(wallet.canFulfillOrder(obe)){
+            orderBook.insertOrder(obe);
+        } else{
+            std::cout<< "error somewhere " << std::endl;
+        }
+    }
     
 }
