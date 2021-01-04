@@ -321,7 +321,7 @@ double MerkelMain::generatePredictions(std::vector<DataHolder> productData){
             return abs(lhs.error) < abs(rhs.error);
         });
 
-        std::cout << "After sorting = b0: " << errorVal[0].b0 << " b1 : " << errorVal[0].b1 << " error : " << errorVal[0].error << std::endl;
+        // std::cout << "After sorting = b0: " << errorVal[0].b0 << " b1 : " << errorVal[0].b1 << " error : " << errorVal[0].error << std::endl;
         
         
         currentPrice = (productData[productData.size()-1].avgAsk + productData[productData.size()-1].avgBid)/2;
@@ -343,54 +343,62 @@ void MerkelMain::generateBidWithPredictions(std::string productName){
     double predictions, lowerThanPrediction, lowestPrice, bidAmount, walletAmount;
 
     std::vector<OrderBookEntry> entries;
-
+    std::cout << "productName : " << productName << std::endl;
+    std::cout << "currentTime : " << currentTime << std::endl;
         if(productName == "BTC/USDT"){
             predictions = generatePredictions(btcUSDTDataHolder);
-            entries = orderBook.getOrders(OrderBookType::bid, "BTC/USDT", currentTime );
+            entries = orderBook.getOrders(OrderBookType::ask, "BTC/USDT", currentTime );
 
         }
 
         if(productName == "DOGE/BTC"){
             predictions = generatePredictions(dogeBTCDataHolder);
-            entries = orderBook.getOrders(OrderBookType::bid, "DOGE/BTC", currentTime );
+            entries = orderBook.getOrders(OrderBookType::ask, "DOGE/BTC", currentTime );
 
         }
 
         if(productName == "DOGE/USDT"){
             predictions = generatePredictions(dogeUSDTDataHolder);
-            entries = orderBook.getOrders(OrderBookType::bid, "DOGE/USDT", currentTime );
+            entries = orderBook.getOrders(OrderBookType::ask, "DOGE/USDT", currentTime );
 
         }
 
         if(productName == "ETH/BTC"){
+            std::cout << " FUNCTION IS CURRENTLY IN ETH/BTC!!! "<< std::endl;
             predictions = generatePredictions(ethBTCDataHolder);
-            entries = orderBook.getOrders(OrderBookType::bid, "ETH/BTC", currentTime );
-
+            std::cout << "currentTime after generatePredictions : " << currentTime << std::endl;
+            entries = orderBook.getOrders(OrderBookType::ask, "ETH/BTC", currentTime );
         }
 
         if(productName == "ETH/USDT"){
             predictions = generatePredictions(ethUSDTDataHolder);
-            entries = orderBook.getOrders(OrderBookType::bid, "ETH/USDT", currentTime );
-            
+            entries = orderBook.getOrders(OrderBookType::ask, "ETH/USDT", currentTime );
         }
 
         for(OrderBookEntry entry : entries){
+            std::cout << "currently in FOR loop entry:entries" << std::endl;
             //if entry Price is lower than prediction price, set it as that it is the lower than prediction
             if(entry.price < predictions) {
                 lowerThanPrediction = entry.price;
+                std::cout << "entry.price value : " << entry.price << std::endl;
+                std::cout << "lowerThanPrediction value : " << lowerThanPrediction << std::endl;
                 //after checking that entry price is lower than prediction, and theres a new entry price thats lower, set that as lowestPrice.
                 if(entry.price <= lowerThanPrediction){
                     lowestPrice = entry.price;
+                    std::cout << "lowestPrice value : " << lowestPrice << std::endl;
+                }
+                if(entry.price == lowestPrice){
                     bidAmount = entry.amount;
+                    std::cout << "bidAmount value : " << bidAmount << std::endl;
                 }
             }
         }
-        
+
         OrderBookEntry obe {
                 lowestPrice,
                 bidAmount,
                 currentTime,
-                "BTC/USDT",
+                productName,
                 OrderBookType::bid
         };
         obe.username = "simuser";
@@ -417,7 +425,7 @@ void MerkelMain::generateBidWithPredictions(std::string productName){
                 lowestPrice,
                 bidAmount,
                 currentTime,
-                "BTC/USDT",
+                productName,
                 OrderBookType::bid
         };
         if(wallet.canFulfillOrder(obe)){

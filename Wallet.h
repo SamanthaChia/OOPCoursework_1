@@ -25,7 +25,7 @@ class Wallet
         /** generate a string representation of the wallet */
         std::string toString();
 
-        // double walletValue();
+
 
         std::map<std::string,double> currencies;
 
