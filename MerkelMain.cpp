@@ -343,8 +343,6 @@ void MerkelMain::generateBidWithPredictions(std::string productName){
     double predictions, lowerThanPrediction, lowestPrice, bidAmount, walletAmount;
 
     std::vector<OrderBookEntry> entries;
-    std::cout << "productName : " << productName << std::endl;
-    std::cout << "currentTime : " << currentTime << std::endl;
         if(productName == "BTC/USDT"){
             predictions = generatePredictions(btcUSDTDataHolder);
             entries = orderBook.getOrders(OrderBookType::ask, "BTC/USDT", currentTime );
@@ -364,9 +362,7 @@ void MerkelMain::generateBidWithPredictions(std::string productName){
         }
 
         if(productName == "ETH/BTC"){
-            std::cout << " FUNCTION IS CURRENTLY IN ETH/BTC!!! "<< std::endl;
             predictions = generatePredictions(ethBTCDataHolder);
-            std::cout << "currentTime after generatePredictions : " << currentTime << std::endl;
             entries = orderBook.getOrders(OrderBookType::ask, "ETH/BTC", currentTime );
         }
 
@@ -376,20 +372,15 @@ void MerkelMain::generateBidWithPredictions(std::string productName){
         }
 
         for(OrderBookEntry entry : entries){
-            std::cout << "currently in FOR loop entry:entries" << std::endl;
             //if entry Price is lower than prediction price, set it as that it is the lower than prediction
             if(entry.price < predictions) {
                 lowerThanPrediction = entry.price;
-                std::cout << "entry.price value : " << entry.price << std::endl;
-                std::cout << "lowerThanPrediction value : " << lowerThanPrediction << std::endl;
                 //after checking that entry price is lower than prediction, and theres a new entry price thats lower, set that as lowestPrice.
                 if(entry.price <= lowerThanPrediction){
                     lowestPrice = entry.price;
-                    std::cout << "lowestPrice value : " << lowestPrice << std::endl;
                 }
                 if(entry.price == lowestPrice){
                     bidAmount = entry.amount;
-                    std::cout << "bidAmount value : " << bidAmount << std::endl;
                 }
             }
         }
@@ -418,7 +409,7 @@ void MerkelMain::generateBidWithPredictions(std::string productName){
                 walletAmount = pair.second;
                 bidAmount = walletAmount/lowestPrice;
             } else{
-                std::cout<< "Wallet has insufficient funds. " << std::endl;
+                std::cout<< "Wallet does not have this currency. " << std::endl;
             }
         }
         OrderBookEntry obe {
@@ -435,14 +426,16 @@ void MerkelMain::generateBidWithPredictions(std::string productName){
         }
     }
     
-    //matching
-    std::vector<OrderBookEntry> sales = orderBook.matchAsksToBids(productName, currentTime);
-    for(OrderBookEntry& sale : sales)
-    {   
-        if(sale.username == "simuser")
-        {
-            wallet.processSale(sale);
-        }
-    }
+    // //matching
+    // std::vector<OrderBookEntry> sales = orderBook.matchAsksToBids(productName, currentTime);
+    // for(OrderBookEntry& sale : sales)
+    // {   
+    //     if(sale.username == "simuser")
+    //     {
+    //         wallet.processSale(sale);
+    //     }
+    // }
+
+    // currentTime = orderBook.getNextTime(currentTime);
     
 }
