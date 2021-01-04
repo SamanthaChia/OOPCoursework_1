@@ -435,4 +435,14 @@ void MerkelMain::generateBidWithPredictions(std::string productName){
         }
     }
     
+    //matching
+    std::vector<OrderBookEntry> sales = orderBook.matchAsksToBids(productName, currentTime);
+    for(OrderBookEntry& sale : sales)
+    {   
+        if(sale.username == "simuser")
+        {
+            wallet.processSale(sale);
+        }
+    }
+    
 }
