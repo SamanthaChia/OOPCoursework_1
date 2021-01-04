@@ -149,7 +149,12 @@ void MerkelMain::enterBid(){
     //         std::cout << "MerkelMain::enterBid Bad input " << std::endl;
     //     }
     // }
+    generateBidWithPredictions("BTC/USDT");
+    generateBidWithPredictions("DOGE/BTC");
+    generateBidWithPredictions("DOGE/USDT");
     generateBidWithPredictions("ETH/BTC");
+    generateBidWithPredictions("ETH/USDT");
+
 }
 
 void MerkelMain::printWallet(){
@@ -399,31 +404,34 @@ void MerkelMain::generateBidWithPredictions(std::string productName){
         std::cout<<"Wallet looks good. " << std::endl;
         orderBook.insertOrder(obe);
     } else{
-        std::cout<<"Wallet unable to handle with max Amount offered in order List, taking max amount you can order. " <<std::endl;
         std::vector<std::string> currs = CSVReader::tokenise(productName, '/');
         std::string currency = currs[1];
         for(std::pair<std::string,double> pair : wallet.currencies){
             std::string currencyNameInWallet = pair.first;
-            if(currencyNameInWallet == currency)
+            if(currencyNameInWallet != currency){
+                std::cout<< "Wallet does not have this currency. " << std::endl;
+                continue;
+            }
+            else if(currencyNameInWallet == currency)
             {
+                std::cout<<"Wallet unable to handle with max Amount offered in order List, taking max amount you can order. " <<std::endl;
                 walletAmount = pair.second;
                 bidAmount = walletAmount/lowestPrice;
-            } else{
-                std::cout<< "Wallet does not have this currency. " << std::endl;
+
+                OrderBookEntry obe {
+                    lowestPrice,
+                    bidAmount,
+                    currentTime,
+                    productName,
+                    OrderBookType::bid
+                };
+                 if(wallet.canFulfillOrder(obe)){
+                    orderBook.insertOrder(obe);
+                } else{
+                    std::cout<< "error somewhere " << std::endl;
+                }
             }
-        }
-        OrderBookEntry obe {
-                lowestPrice,
-                bidAmount,
-                currentTime,
-                productName,
-                OrderBookType::bid
-        };
-        if(wallet.canFulfillOrder(obe)){
-            orderBook.insertOrder(obe);
-        } else{
-            std::cout<< "error somewhere " << std::endl;
-        }
+        }  
     }
     
     // //matching
