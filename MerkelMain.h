@@ -39,7 +39,7 @@ class MerkelMain{
          * for specified product
          */
         void automatePredictionBot();
-        void generateBidWithPredictions();
+        void generateBidWithPredictions(std::string productName);
 
         std::string currentTime;
         std::vector<DataHolder> btcUSDTDataHolder;

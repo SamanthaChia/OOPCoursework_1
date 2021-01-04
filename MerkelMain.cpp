@@ -245,6 +245,7 @@ void MerkelMain::generateDataHolder(){
 }
 
 void MerkelMain::automatePredictionBot(){
+    //after 10 times
     for(int i =0; i<10;){
         generateDataHolder();
         currentTime = orderBook.getNextTime(currentTime);
@@ -293,7 +294,6 @@ double MerkelMain::generatePredictions(std::vector<DataHolder> productData){
 
 
         std::cout << "Product: " << productData[0].product << std::endl;
-        std::vector<OrderBookEntry> entries = orderBook.getOrders(OrderBookType::bid, productData[0].product, currentTime );
         if(currentTime == orderBook.getEarliestTime()){
             b1 = 0;
             b0 = 0;
@@ -338,40 +338,68 @@ double MerkelMain::generatePredictions(std::vector<DataHolder> productData){
 
 // When bidding usually want to take highest maximum bid.
 // predicted value = next value.
-void MerkelMain::generateBidWithPredictions(){
-    double btcUSDTPredictions, dogeBTCPredictions, dogeUSDTPredictions, ethBTCPredictions, ethUSDTPredictions;
-    std::vector<OrderBookEntry> btcUSDTEntries, dogeBTCEntries, dogeUSDTEntries, ethBTCEntries, ethUSDTEntries;
+void MerkelMain::generateBidWithPredictions(std::string productName){
+    double predictions;
+    std::vector<OrderBookEntry> entries;
 
-    btcUSDTPredictions = generatePredictions(btcUSDTDataHolder);
-    btcUSDTEntries = orderBook.getOrders(OrderBookType::bid, "BTC/USDT", currentTime );
+        if(productName == "BTC/USDT"){
+            // generatePredictions(btcUSDTDataHolder);
+            predictions = generatePredictions(btcUSDTDataHolder);
+            entries = orderBook.getOrders(OrderBookType::bid, "BTC/USDT", currentTime );
 
-    dogeBTCPredictions = generatePredictions(btcUSDTDataHolder);
-    dogeBTCEntries = orderBook.getOrders(OrderBookType::bid, "DOGE/BTC", currentTime );
+        }
 
-    dogeUSDTPredictions = generatePredictions(btcUSDTDataHolder);
-    dogeUSDTEntries = orderBook.getOrders(OrderBookType::bid, "DOGE/USDT", currentTime );
+        if(productName == "DOGE/BTC"){
+            predictions = generatePredictions(dogeBTCDataHolder);
+            entries = orderBook.getOrders(OrderBookType::bid, "DOGE/BTC", currentTime );
 
-    ethBTCPredictions = generatePredictions(btcUSDTDataHolder);
-    ethBTCEntries = orderBook.getOrders(OrderBookType::bid, "ETH/BTC", currentTime );
+        }
 
-    ethUSDTPredictions = generatePredictions(btcUSDTDataHolder);
-    ethUSDTEntries = orderBook.getOrders(OrderBookType::bid, "ETH/USDT", currentTime );
+        if(productName == "DOGE/USDT"){
+            predictions = generatePredictions(dogeUSDTDataHolder);
+            entries = orderBook.getOrders(OrderBookType::bid, "DOGE/USDT", currentTime );
 
-    if(btcUSDTPredictions < OrderBook::getHighPrice(btcUSDTEntries)){
-        OrderBookEntry obe {
-                btcUSDTPredictions,
-                1,
-                currentTime,
-                "BTC/USDT",
-                OrderBookType::bid
-        };
-        obe.username = "simuser";
+        }
 
-    if(wallet.canFulfillOrder(obe))
-    {
-        std::cout<<"Wallet looks good. " << std::endl;
-        orderBook.insertOrder(obe);
-    }
-    }
+        if(productName == "ETH/BTC"){
+            predictions = generatePredictions(ethBTCDataHolder);
+            entries = orderBook.getOrders(OrderBookType::bid, "ETH/BTC", currentTime );
+
+        }
+
+        if(productName == "ETH/USDT"){
+            predictions = generatePredictions(ethUSDTDataHolder);
+            entries = orderBook.getOrders(OrderBookType::bid, "ETH/USDT", currentTime );
+            
+        }
+
+        for(OrderBookEntry entry : entries){
+            double lowerThanPrediction, lowestPrice;
+            //if entry Price is lower than prediction price, set it as that it is the lower than prediction
+            if(entry.price < predictions) {
+                lowerThanPrediction = entry.price;
+                //after checking that entry price is lower than prediction, and theres a new entry price thats lower, set that as lowestPrice.
+                if(entry.price <= lowerThanPrediction){
+                    lowestPrice = entry.price;
+                }
+            }
+        }
+
+    // if(btcUSDTPredictions < OrderBook::getHighPrice(btcUSDTEntries)){
+    //     OrderBookEntry obe {
+    //             btcUSDTPredictions,
+    //             1,
+    //             currentTime,
+    //             "BTC/USDT",
+    //             OrderBookType::bid
+    //     };
+    //     obe.username = "simuser";
+
+    // if(wallet.canFulfillOrder(obe))
+    // {
+    //     std::cout<<"Wallet looks good. " << std::endl;
+    //     orderBook.insertOrder(obe);
+    // }
+    // }
     
 }
