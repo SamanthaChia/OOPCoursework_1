@@ -446,23 +446,22 @@ void MerkelMain::generateBidWithPredictions(std::string productName){
     }
     
     //matching
-    std::vector<OrderBookEntry> sales = orderBook.matchAsksToBids(productName, currentTime);
-    for(OrderBookEntry& sale : sales)
-    {   if(sale.username == "simuser")
-        {
-            for(SaleStatus& salewStat : saleWithStatus){
-                if(sale.product == salewStat.obe.product && sale.amount == salewStat.obe.amount){
-                    salewStat.saleStatus = true;
-                }
+    // std::vector<OrderBookEntry> sales = orderBook.matchAsksToBids(productName, currentTime);
+    // for(OrderBookEntry& sale : sales)
+    // {   if(sale.username == "simuser")
+    //     {
+    //         for(SaleStatus& salewStat : saleWithStatus){
+    //             if(sale.product == salewStat.obe.product && sale.amount == salewStat.obe.amount){
+    //                 salewStat.saleStatus = true;
+    //             }
 
-                if(salewStat.saleStatus == false){
-                    entries = orderBook.getOrders(OrderBookType::ask, productName, currentTime );
-                    entries.erase(std::remove(entries.begin(),entries.end(), salewStat.obe), entries.end());
-                }
-            }
-            wallet.processSale(sale);
-        }
-    }
+    //             if(salewStat.saleStatus == false){
+                    
+    //             }
+    //         }
+    //         wallet.processSale(sale);
+    //     }
+    // }
 }
 
 //remove the bid if a sale is not made. = matchAsksToBids fail
