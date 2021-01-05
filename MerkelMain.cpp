@@ -450,3 +450,7 @@ void MerkelMain::generateBidWithPredictions(std::string productName){
 }
 
 //remove the bid if a sale is not made. = matchAsksToBids fail
+
+void MerkelMain::generateOfferWithPredictions(std::string productName){
+
+}
