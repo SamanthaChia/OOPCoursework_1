@@ -28,7 +28,7 @@ class MerkelMain{
         /** called to run linear regression predictions using productData
          * calculations done here.
         */
-        void generatePredictions(std::vector<DataHolder> productData);
+        double generatePredictions(std::vector<DataHolder> productData);
        /** called to create data holders for specific products and also 
         * to obtain ask and bid entries. DataHolder containing
         * productName, averageAsk, askVolume, averageBid, bidVolume
@@ -39,6 +39,7 @@ class MerkelMain{
          * for specified product
          */
         void automatePredictionBot();
+        void generateBidWithPredictions(std::string productName);
 
         std::string currentTime;
         std::vector<DataHolder> btcUSDTDataHolder;

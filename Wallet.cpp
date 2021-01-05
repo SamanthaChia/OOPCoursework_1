@@ -74,6 +74,7 @@ std::string Wallet::toString()
     return s;
 }
 
+
 bool Wallet::canFulfillOrder(OrderBookEntry order)
 {
     std::vector<std::string> currs = CSVReader::tokenise(order.product, '/');
