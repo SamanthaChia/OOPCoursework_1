@@ -18,7 +18,7 @@ void MerkelMain::init(){
     currentTime = orderBook.getEarliestTime();
 
     wallet.insertCurrency("BTC", 10);
-    automatePredictionBot();
+    // automatePredictionBot();
     while(true){
         printMenu();
         input = getUserOption();
@@ -52,7 +52,7 @@ void MerkelMain::printMenu(){
 
 int MerkelMain::getUserOption()
 {
-    int userOption = 0;
+    int userOption;
     std::string line;
     std::cout << "To start the bot, please enter 1" <<std::endl;
     std::getline(std::cin, line);
@@ -64,7 +64,6 @@ int MerkelMain::getUserOption()
     }
 
     std::cout << "You have entered : " << userOption << std::endl;
-    std::cout << "Starting MerkelrexBot " << std::endl;
     return userOption;
 }
 
@@ -187,27 +186,28 @@ void MerkelMain::gotoNextTimeFrame(){
 }
 
 void MerkelMain::procesUserOption(int userOption){
-    if(userOption <= 0 || userOption > 6){
+    if(userOption <= 0 || userOption > 1){
         std::cout << "You have entered an invalid option." << std::endl;
     }
     else if(userOption == 1){
-        printHelp();
+        std::cout << "Starting MerkelrexBot " << std::endl;
+        automatePredictionBot();
     }
-    else if(userOption == 2){
-        printMarketStats();
-    }
-    else if(userOption == 3){
-        enterAsk();
-    }
-    else if(userOption == 4){
-        enterBid();
-    }
-    else if(userOption == 5){
-        printWallet();
-    }
-    else if(userOption == 6){
-        gotoNextTimeFrame();
-    }
+    // else if(userOption == 2){
+    //     printMarketStats();
+    // }
+    // else if(userOption == 3){
+    //     enterAsk();
+    // }
+    // else if(userOption == 4){
+    //     enterBid();
+    // }
+    // else if(userOption == 5){
+    //     printWallet();
+    // }
+    // else if(userOption == 6){
+    //     gotoNextTimeFrame();
+    // }
 }
 
 void MerkelMain::generateDataHolder(){
@@ -264,26 +264,9 @@ void MerkelMain::automatePredictionBot(){
         i++;
     }
     for(std::string const& p : orderBook.getKnownProducts()){
-        if(p == "BTC/USDT"){
-            generatePredictions(btcUSDTDataHolder);
-        }
-
-        if(p == "DOGE/BTC"){
-            generatePredictions(dogeBTCDataHolder);
-        }
-
-        if(p == "DOGE/USDT"){
-            generatePredictions(dogeUSDTDataHolder);
-        }
-
-        if(p == "ETH/BTC"){
-            generatePredictions(ethBTCDataHolder);
-        }
-
-        if(p == "ETH/USDT"){
-            generatePredictions(ethUSDTDataHolder);
-        }
+        generateBidWithPredictions(p);
     }
+
 }
 
 //used to be void changed to double to return predictedValue
@@ -343,7 +326,6 @@ double MerkelMain::generatePredictions(std::vector<DataHolder> productData){
         predictedValue= errorVal[0].b0+ errorVal[0].b1 * x[x.size()-1] * currentPrice + currentPrice ;
 
         std::cout << "Predicted Value : " << predictedValue << std::endl;
-        std::cout << " " <<std::endl;
 
         return predictedValue;
 }
