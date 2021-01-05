@@ -28,18 +28,22 @@ void MerkelMain::init(){
 
 void MerkelMain::printMenu(){
 
-    // 1 print help
-    std::cout << "1: Print help. " << std::endl;
-    // 2 print exchange stats
-    std::cout << "2 : Print exchange stats. " << std::endl;
-    // 3 make an offer
-    std::cout << "3 : Make an offer. " << std::endl;
-    // 4 make a bid
-    std::cout << "4 : Make a bid. " << std::endl;
-    // 5 printi wallet
-    std::cout << "5 : Show wallet. " << std::endl;
-    // 6 continue
-    std::cout << "6 : Continue. " << std::endl;
+    // // 1 print help
+    // std::cout << "1: Print help. " << std::endl;
+    // // 2 print exchange stats
+    // std::cout << "2 : Print exchange stats. " << std::endl;
+    // // 3 make an offer
+    // std::cout << "3 : Make an offer. " << std::endl;
+    // // 4 make a bid
+    // std::cout << "4 : Make a bid. " << std::endl;
+    // // 5 printi wallet
+    // std::cout << "5 : Show wallet. " << std::endl;
+    // // 6 continue
+    // std::cout << "6 : Continue. " << std::endl;
+
+
+    std::cout << "Welcome to MerkelrexBot!" <<std::endl;
+    std::cout << "The aim of the bot is to make money. To analyse bids and make offers" << std::endl;
 
     std::cout << "================ " << std::endl;
 
@@ -50,7 +54,7 @@ int MerkelMain::getUserOption()
 {
     int userOption = 0;
     std::string line;
-    std::cout << "Please enter a value from 1 - 6" << std::endl;
+    std::cout << "To start the bot, please enter 1" <<std::endl;
     std::getline(std::cin, line);
     try{
         userOption = std::stoi(line);
@@ -60,6 +64,7 @@ int MerkelMain::getUserOption()
     }
 
     std::cout << "You have entered : " << userOption << std::endl;
+    std::cout << "Starting MerkelrexBot " << std::endl;
     return userOption;
 }
 
