@@ -442,7 +442,6 @@ void MerkelMain::generateBidWithPredictions(std::string productName){
     {   
         if(sale.username == "simuser")
         {
-            // wallet.processSale(sale);
         }
     }
 

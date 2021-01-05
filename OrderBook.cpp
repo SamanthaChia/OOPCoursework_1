@@ -92,7 +92,7 @@ std::string OrderBook::getNextTime(std::string timestamp){
 
 void OrderBook::insertOrder(OrderBookEntry& order){
     orders.push_back(order);
-    std::sort(orders.begin(), orders.end(), OrderBookEntry::compareByTimestamp);
+    // std::sort(orders.begin(), orders.end(), OrderBookEntry::compareByTimestamp);
 }
 
 std::vector<OrderBookEntry> OrderBook::matchAsksToBids(std::string product, std::string timestamp)
