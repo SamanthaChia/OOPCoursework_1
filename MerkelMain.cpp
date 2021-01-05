@@ -452,5 +452,31 @@ void MerkelMain::generateBidWithPredictions(std::string productName){
 //remove the bid if a sale is not made. = matchAsksToBids fail
 
 void MerkelMain::generateOfferWithPredictions(std::string productName){
+    double predictions, lowerThanPrediction, lowestPrice, bidAmount, walletAmount;
 
+    std::vector<OrderBookEntry> entries;
+        if(productName == "BTC/USDT"){
+            predictions = generatePredictions(btcUSDTDataHolder);
+            entries = orderBook.getOrders(OrderBookType::ask, "BTC/USDT", currentTime );
+        }
+
+        if(productName == "DOGE/BTC"){
+            predictions = generatePredictions(dogeBTCDataHolder);
+            entries = orderBook.getOrders(OrderBookType::ask, "DOGE/BTC", currentTime );
+        }
+
+        if(productName == "DOGE/USDT"){
+            predictions = generatePredictions(dogeUSDTDataHolder);
+            entries = orderBook.getOrders(OrderBookType::ask, "DOGE/USDT", currentTime );
+        }
+
+        if(productName == "ETH/BTC"){
+            predictions = generatePredictions(ethBTCDataHolder);
+            entries = orderBook.getOrders(OrderBookType::ask, "ETH/BTC", currentTime );
+        }
+
+        if(productName == "ETH/USDT"){
+            predictions = generatePredictions(ethUSDTDataHolder);
+            entries = orderBook.getOrders(OrderBookType::ask, "ETH/USDT", currentTime );
+        }
 }
