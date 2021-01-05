@@ -440,8 +440,18 @@ void MerkelMain::generateBidWithPredictions(std::string productName){
     std::vector<OrderBookEntry> sales = orderBook.matchAsksToBids(productName, currentTime);
     for(OrderBookEntry& sale : sales)
     {   
-        if(sale.username == "simuser")
-        {
+          
+        for(std::string const& p : orderBook.getKnownProducts()){
+            if(sale.username == "simuser")
+            { 
+                entries = orderBook.getOrders(OrderBookType::ask, productName, currentTime );
+                auto it = std::find(entries.begin(),entries.end(),sale);
+                if( it != entries.end()){
+                    int index = it - entries.begin();
+                    entries.erase(std::remove(entries.begin(),entries.end(), sale), entries.end());
+                }
+            }
+            
         }
     }
 
