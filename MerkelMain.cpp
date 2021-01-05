@@ -479,4 +479,6 @@ void MerkelMain::generateOfferWithPredictions(std::string productName){
             predictions = generatePredictions(ethUSDTDataHolder);
             entries = orderBook.getOrders(OrderBookType::ask, "ETH/USDT", currentTime );
         }
+
+        
 }
