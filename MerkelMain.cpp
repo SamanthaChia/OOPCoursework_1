@@ -2,6 +2,7 @@
 #include "OrderBookEntry.h"
 #include "CSVReader.h"
 #include "DataHolder.h"
+#include "SaleStatus.h"
 #include <iostream>
 #include <vector>
 #include <limits>
@@ -346,6 +347,7 @@ double MerkelMain::generatePredictions(std::vector<DataHolder> productData){
 // predicted value = next value.
 void MerkelMain::generateBidWithPredictions(std::string productName){
     double predictions, lowerThanPrediction, lowestPrice, bidAmount, walletAmount;
+    std::vector<SaleStatus> saleWithStatus;
 
     std::vector<OrderBookEntry> entries;
         if(productName == "BTC/USDT"){
@@ -400,6 +402,13 @@ void MerkelMain::generateBidWithPredictions(std::string productName){
     {
         std::cout<<"Wallet looks good. " << std::endl;
         orderBook.insertOrder(obe);
+        //to check if sale has been processes and successfully sold.
+        // if false = fail , true = success.
+        SaleStatus saleStatus(
+            obe,
+            false
+        );
+        saleWithStatus.push_back(saleStatus);
     } else{
         std::vector<std::string> currs = CSVReader::tokenise(productName, '/');
         std::string currency = currs[1];
@@ -424,6 +433,11 @@ void MerkelMain::generateBidWithPredictions(std::string productName){
                 };
                  if(wallet.canFulfillOrder(obe)){
                     orderBook.insertOrder(obe);
+                    SaleStatus saleStatus(
+                        obe,
+                        false
+                    );
+                    saleWithStatus.push_back(saleStatus);
                 } else{
                     std::cout<< "error somewhere " << std::endl;
                 }
@@ -434,9 +448,18 @@ void MerkelMain::generateBidWithPredictions(std::string productName){
     //matching
     std::vector<OrderBookEntry> sales = orderBook.matchAsksToBids(productName, currentTime);
     for(OrderBookEntry& sale : sales)
-    {   
-        if(sale.username == "simuser")
+    {   if(sale.username == "simuser")
         {
+            for(SaleStatus& salewStat : saleWithStatus){
+                if(sale.product == salewStat.obe.product && sale.amount == salewStat.obe.amount){
+                    salewStat.saleStatus = true;
+                }
+
+                if(salewStat.saleStatus == false){
+                    entries = orderBook.getOrders(OrderBookType::ask, productName, currentTime );
+                    entries.erase(std::remove(entries.begin(),entries.end(), salewStat.obe), entries.end());
+                }
+            }
             wallet.processSale(sale);
         }
     }
