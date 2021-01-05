@@ -2,7 +2,6 @@
 #include "OrderBookEntry.h"
 #include "CSVReader.h"
 #include "DataHolder.h"
-#include "SaleStatus.h"
 #include <iostream>
 #include <vector>
 #include <limits>
@@ -18,7 +17,7 @@ void MerkelMain::init(){
     currentTime = orderBook.getEarliestTime();
 
     wallet.insertCurrency("BTC", 10);
-    // automatePredictionBot();
+    automatePredictionBot();
     while(true){
         printMenu();
         input = getUserOption();
@@ -27,8 +26,19 @@ void MerkelMain::init(){
 }
 
 void MerkelMain::printMenu(){
-    std::cout << "Welcome to MerkelrexBot!" <<std::endl;
-    std::cout << "The aim of the bot is to make money. To analyse bids and make offers" << std::endl;
+
+    // 1 print help
+    std::cout << "1: Print help. " << std::endl;
+    // 2 print exchange stats
+    std::cout << "2 : Print exchange stats. " << std::endl;
+    // 3 make an offer
+    std::cout << "3 : Make an offer. " << std::endl;
+    // 4 make a bid
+    std::cout << "4 : Make a bid. " << std::endl;
+    // 5 printi wallet
+    std::cout << "5 : Show wallet. " << std::endl;
+    // 6 continue
+    std::cout << "6 : Continue. " << std::endl;
 
     std::cout << "================ " << std::endl;
 
@@ -37,9 +47,9 @@ void MerkelMain::printMenu(){
 
 int MerkelMain::getUserOption()
 {
-    int userOption;
+    int userOption = 0;
     std::string line;
-    std::cout << "To start the bot, please enter 1" <<std::endl;
+    std::cout << "Please enter a value from 1 - 6" << std::endl;
     std::getline(std::cin, line);
     try{
         userOption = std::stoi(line);
@@ -106,39 +116,45 @@ void MerkelMain::enterAsk(){
 }
 
 void MerkelMain::enterBid(){
-    std::cout << "Make an bid - enter the amount: product, price, amount, eg ETH/BTC, 200,0.5 " << std::endl;
-    std::string input;
-    std::getline(std::cin, input);
+    // std::cout << "Make an bid - enter the amount: product, price, amount, eg ETH/BTC, 200,0.5 " << std::endl;
+    // std::string input;
+    // std::getline(std::cin, input);
 
-    std::vector<std::string> tokens = CSVReader::tokenise(input,',');
-    if(tokens.size() != 3){
-        std::cout << "MerkelMain::enterBid Bad input " << std::endl;
-    }
+    // std::vector<std::string> tokens = CSVReader::tokenise(input,',');
+    // if(tokens.size() != 3){
+    //     std::cout << "MerkelMain::enterBid Bad input " << std::endl;
+    // }
 
-    else{
-        try{
-            OrderBookEntry obe = CSVReader::stringsToOBE(
-                tokens[1],
-                tokens[2],
-                currentTime,
-                tokens[0],
-                OrderBookType::bid
-            );
-            obe.username = "simuser";
+    // else{
+    //     try{
+    //         OrderBookEntry obe = CSVReader::stringsToOBE(
+    //             tokens[1],
+    //             tokens[2],
+    //             currentTime,
+    //             tokens[0],
+    //             OrderBookType::bid
+    //         );
+    //         obe.username = "simuser";
 
-            if(wallet.canFulfillOrder(obe))
-            {
-                std::cout<<"Wallet looks good. " << std::endl;
-                orderBook.insertOrder(obe);
-            }
-            else{
-                std::cout<< "Wallet has insufficient funds. " << std::endl;
-            }
-        }catch(const std::exception& e)
-        {
-            std::cout << "MerkelMain::enterBid Bad input " << std::endl;
-        }
-    }
+    //         if(wallet.canFulfillOrder(obe))
+    //         {
+    //             std::cout<<"Wallet looks good. " << std::endl;
+    //             orderBook.insertOrder(obe);
+    //         }
+    //         else{
+    //             std::cout<< "Wallet has insufficient funds. " << std::endl;
+    //         }
+    //     }catch(const std::exception& e)
+    //     {
+    //         std::cout << "MerkelMain::enterBid Bad input " << std::endl;
+    //     }
+    // }
+    generateBidWithPredictions("BTC/USDT");
+    generateBidWithPredictions("DOGE/BTC");
+    generateBidWithPredictions("DOGE/USDT");
+    generateBidWithPredictions("ETH/BTC");
+    generateBidWithPredictions("ETH/USDT");
+
 }
 
 void MerkelMain::printWallet(){
@@ -165,12 +181,26 @@ void MerkelMain::gotoNextTimeFrame(){
 }
 
 void MerkelMain::procesUserOption(int userOption){
-    if(userOption <= 0 || userOption > 1){
+    if(userOption <= 0 || userOption > 6){
         std::cout << "You have entered an invalid option." << std::endl;
     }
     else if(userOption == 1){
-        std::cout << "Starting MerkelrexBot " << std::endl;
-        automatePredictionBot();
+        printHelp();
+    }
+    else if(userOption == 2){
+        printMarketStats();
+    }
+    else if(userOption == 3){
+        enterAsk();
+    }
+    else if(userOption == 4){
+        enterBid();
+    }
+    else if(userOption == 5){
+        printWallet();
+    }
+    else if(userOption == 6){
+        gotoNextTimeFrame();
     }
 }
 
@@ -228,9 +258,26 @@ void MerkelMain::automatePredictionBot(){
         i++;
     }
     for(std::string const& p : orderBook.getKnownProducts()){
-        generateBidWithPredictions(p);
-    }
+        if(p == "BTC/USDT"){
+            generatePredictions(btcUSDTDataHolder);
+        }
 
+        if(p == "DOGE/BTC"){
+            generatePredictions(dogeBTCDataHolder);
+        }
+
+        if(p == "DOGE/USDT"){
+            generatePredictions(dogeUSDTDataHolder);
+        }
+
+        if(p == "ETH/BTC"){
+            generatePredictions(ethBTCDataHolder);
+        }
+
+        if(p == "ETH/USDT"){
+            generatePredictions(ethUSDTDataHolder);
+        }
+    }
 }
 
 //used to be void changed to double to return predictedValue
@@ -290,6 +337,7 @@ double MerkelMain::generatePredictions(std::vector<DataHolder> productData){
         predictedValue= errorVal[0].b0+ errorVal[0].b1 * x[x.size()-1] * currentPrice + currentPrice ;
 
         std::cout << "Predicted Value : " << predictedValue << std::endl;
+        std::cout << " " <<std::endl;
 
         return predictedValue;
 }
@@ -298,7 +346,6 @@ double MerkelMain::generatePredictions(std::vector<DataHolder> productData){
 // predicted value = next value.
 void MerkelMain::generateBidWithPredictions(std::string productName){
     double predictions, lowerThanPrediction, lowestPrice, bidAmount, walletAmount;
-    std::vector<SaleStatus> saleWithStatus;
 
     std::vector<OrderBookEntry> entries;
         if(productName == "BTC/USDT"){
@@ -353,13 +400,6 @@ void MerkelMain::generateBidWithPredictions(std::string productName){
     {
         std::cout<<"Wallet looks good. " << std::endl;
         orderBook.insertOrder(obe);
-        //to check if sale has been processes and successfully sold.
-        // if false = fail , true = success.
-        SaleStatus saleStatus(
-            obe,
-            false
-        );
-        saleWithStatus.push_back(saleStatus);
     } else{
         std::vector<std::string> currs = CSVReader::tokenise(productName, '/');
         std::string currency = currs[1];
@@ -384,11 +424,6 @@ void MerkelMain::generateBidWithPredictions(std::string productName){
                 };
                  if(wallet.canFulfillOrder(obe)){
                     orderBook.insertOrder(obe);
-                    SaleStatus saleStatus(
-                        obe,
-                        false
-                    );
-                    saleWithStatus.push_back(saleStatus);
                 } else{
                     std::cout<< "error somewhere " << std::endl;
                 }
@@ -397,22 +432,17 @@ void MerkelMain::generateBidWithPredictions(std::string productName){
     }
     
     //matching
-    // std::vector<OrderBookEntry> sales = orderBook.matchAsksToBids(productName, currentTime);
-    // for(OrderBookEntry& sale : sales)
-    // {   if(sale.username == "simuser")
-    //     {
-    //         for(SaleStatus& salewStat : saleWithStatus){
-    //             if(sale.product == salewStat.obe.product && sale.amount == salewStat.obe.amount){
-    //                 salewStat.saleStatus = true;
-    //             }
+    std::vector<OrderBookEntry> sales = orderBook.matchAsksToBids(productName, currentTime);
+    for(OrderBookEntry& sale : sales)
+    {   
+        if(sale.username == "simuser")
+        {
+            // wallet.processSale(sale);
+        }
+    }
 
-    //             if(salewStat.saleStatus == false){
-                    
-    //             }
-    //         }
-    //         wallet.processSale(sale);
-    //     }
-    // }
+    // currentTime = orderBook.getNextTime(currentTime);
+    
 }
 
 //remove the bid if a sale is not made. = matchAsksToBids fail
