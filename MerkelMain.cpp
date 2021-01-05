@@ -440,9 +440,6 @@ void MerkelMain::generateBidWithPredictions(std::string productName){
             wallet.processSale(sale);
         }
     }
-
-    // currentTime = orderBook.getNextTime(currentTime);
-    
 }
 
 //remove the bid if a sale is not made. = matchAsksToBids fail
