@@ -39,9 +39,11 @@ class MerkelMain{
          * for specified product
          */
         void automatePredictionBot();
-        void generateBidWithPredictions(std::string productName);
-        void generateOfferWithPredictions(std::string productName);
-        
+        void checkEligibleOrder();
+        void generateBidWithPredictions(std::string productName, double predictedVal);
+        void generateOfferWithPredictions(std::string productName, double predictedVal);
+
+
         std::string currentTime;
         std::vector<DataHolder> btcUSDTDataHolder;
         std::vector<DataHolder> dogeBTCDataHolder;
