@@ -377,10 +377,8 @@ void MerkelMain::checkEligibleOrder(){
     // wallet always start with BTC only
     if(wallet.currencies["BTC"] > 0){
         //btcUSDT
-        if (btcUSDTPredictedVal > btcUSDTavgPrice)
+        if (btcUSDTPredictedVal < btcUSDTavgPrice)
         {
-            generateBidWithPredictions("BTC/USDT",btcUSDTPredictedVal);
-        } else{
             generateOfferWithPredictions("BTC/USDT",btcUSDTPredictedVal);
         }
         
@@ -388,16 +386,12 @@ void MerkelMain::checkEligibleOrder(){
         if (dogeBTCPredictedVal > dogeBTCavgPrice)
         {
             generateBidWithPredictions("DOGE/BTC",dogeBTCPredictedVal);
-        } else{
-            generateOfferWithPredictions("DOGE/BTC",dogeBTCPredictedVal);
         }
 
         //ethBTC
         if (ethBTCPredictedVal > ethBTCavgPrice)
         {
             generateBidWithPredictions("ETH/BTC",ethBTCPredictedVal);
-        } else{
-            generateOfferWithPredictions("ETH/BTC",ethBTCPredictedVal);
         }
     }
 
@@ -405,54 +399,40 @@ void MerkelMain::checkEligibleOrder(){
         if (btcUSDTPredictedVal > btcUSDTavgPrice)
         {
             generateBidWithPredictions("BTC/USDT",btcUSDTPredictedVal);
-        } else{
-            generateOfferWithPredictions("BTC/USDT",btcUSDTPredictedVal);
         }
 
         if (dogeUSDTPredictedVal > dogeUSDTavgPrice)
         {
             generateBidWithPredictions("DOGE/USDT",dogeUSDTPredictedVal);
-        } else{
-            generateOfferWithPredictions("DOGE/USDT",dogeUSDTPredictedVal);
         }
 
         if (ethUSDTPredictedVal > ethUSDTavgPrice)
         {
             generateBidWithPredictions("ETH/USDT",ethUSDTPredictedVal);
-        } else{
-            generateOfferWithPredictions("ETH/USDT",ethUSDTPredictedVal);
         }
     }
 
     if(wallet.currencies["ETH"] > 0){
-        if (ethUSDTPredictedVal > ethUSDTavgPrice)
+        if (ethUSDTPredictedVal < ethUSDTavgPrice)
         {
-            generateBidWithPredictions("ETH/USDT",ethUSDTPredictedVal);
-        } else{
             generateOfferWithPredictions("ETH/USDT",ethUSDTPredictedVal);
         }
 
-        if (ethBTCPredictedVal > ethBTCavgPrice)
+        if (ethBTCPredictedVal < ethBTCavgPrice)
         {
-            generateBidWithPredictions("ETH/BTC",ethBTCPredictedVal);
-        } else{
             generateOfferWithPredictions("ETH/BTC",ethBTCPredictedVal);
         }
     }
 
     if(wallet.currencies["DOGE"] > 0){
-        if (dogeUSDTPredictedVal > dogeUSDTavgPrice)
+        if (dogeUSDTPredictedVal < dogeUSDTavgPrice)
         {
-            generateBidWithPredictions("DOGE/USDT",dogeUSDTPredictedVal);
-        } else{
             generateOfferWithPredictions("DOGE/USDT",dogeUSDTPredictedVal);
         }
 
         //dogeBTC
-        if (dogeBTCPredictedVal > dogeBTCavgPrice)
+        if (dogeBTCPredictedVal < dogeBTCavgPrice)
         {
-            generateBidWithPredictions("DOGE/BTC",dogeBTCPredictedVal);
-        } else{
             generateOfferWithPredictions("DOGE/BTC",dogeBTCPredictedVal);
         }
     }
