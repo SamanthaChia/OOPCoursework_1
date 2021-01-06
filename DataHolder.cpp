@@ -3,9 +3,9 @@
 DataHolder::DataHolder(
     std::string _product,
     double _avgAsk,
-    int _askVol,
+    double _askVol,
     double _avgBid,
-    int _bidVol
+    double _bidVol
     )
 : product(_product),
   avgAsk(_avgAsk),

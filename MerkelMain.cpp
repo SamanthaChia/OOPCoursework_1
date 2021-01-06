@@ -170,7 +170,7 @@ void MerkelMain::gotoNextTimeFrame(){
     for(std::string p : orderBook.getKnownProducts())
     {
         std::cout << "matching " << p << std::endl;
-        std::vector<OrderBookEntry> sales = orderBook.matchAsksToBids("ETH/BTC", currentTime);
+        std::vector<OrderBookEntry> sales = orderBook.matchAsksToBids(p, currentTime);
         std::cout << "Sales: " << sales.size() << std::endl;
         for(OrderBookEntry& sale : sales)
         {   
@@ -210,16 +210,22 @@ void MerkelMain::procesUserOption(int userOption){
 
 void MerkelMain::generateDataHolder(){
     std::vector<DataHolder> dataHolderBook;
-    int askVol, bidVol;
+    double askVol, bidVol;
     for(std::string const& p : orderBook.getKnownProducts()){
+        askVol = 0;
+        bidVol = 0;
         std::vector<OrderBookEntry> askEntries = orderBook.getOrders(OrderBookType::ask, p, currentTime );
         std::vector<OrderBookEntry> bidEntries = orderBook.getOrders(OrderBookType::bid, p, currentTime );
 
-        askVol = askEntries.size();
-        double avgAsk = orderBook.getTotalPrice(askEntries) /askVol;
+        for(OrderBookEntry askEntry : askEntries){
+            askVol += askEntry.amount;
+        }
+        double avgAsk = orderBook.getTotalPrice(askEntries) /askEntries.size();
         
-        bidVol = bidEntries.size();
-        double avgBid = orderBook.getTotalPrice(bidEntries)/bidVol;
+        for(OrderBookEntry bidEntry : bidEntries){
+            bidVol += bidEntry.amount;
+        }
+        double avgBid = orderBook.getTotalPrice(bidEntries)/bidEntries.size();
 
         DataHolder dh {
             p,
@@ -295,11 +301,14 @@ double MerkelMain::generatePredictions(std::vector<DataHolder> productData){
     for(int i=0;i<productData.size()-1;++i)
     {
         askBidRatio = productData[i].askVol / productData[i].bidVol;
-        avgGrowthRatio = (productData[i].avgAsk - productData[i+1].avgAsk) + (productData[i].avgBid - productData[i+1].avgBid) /2;
+        avgGrowthRatio = ((productData[i].avgAsk - productData[i + 1].avgAsk) + (productData[i].avgBid - productData[i + 1].avgBid)) / 2;
         // x = ratio between askVol and bidVol
         // y = avg growth/loss ratio
         x.push_back(askBidRatio);
+        std::cout << "askBidRatio : " << askBidRatio << std::endl;
         y.push_back(avgGrowthRatio);
+        std::cout << "avgGrowthRatio : " << avgGrowthRatio << std::endl;
+        
     }
 
 
@@ -350,18 +359,23 @@ double MerkelMain::generatePredictions(std::vector<DataHolder> productData){
 }
 
 void MerkelMain::checkEligibleOrder(){
-    double btcUSDTPredictedVal, dogeBTCPredictedVal, ethBTCPredictedVal;
-    double btcUSDTavgPrice, dogeBTCavgPrice, ethBTCavgPrice;
+    double btcUSDTPredictedVal, dogeBTCPredictedVal, ethBTCPredictedVal, dogeUSDTPredictedVal, ethUSDTPredictedVal;
+    double btcUSDTavgPrice, dogeBTCavgPrice, ethBTCavgPrice, dogeUSDTavgPrice, ethUSDTavgPrice;
+
+    btcUSDTPredictedVal = generatePredictions(btcUSDTDataHolder);
+    dogeBTCPredictedVal = generatePredictions(dogeBTCDataHolder);
+    ethBTCPredictedVal = generatePredictions(ethBTCDataHolder);
+    dogeUSDTPredictedVal = generatePredictions(dogeUSDTDataHolder);
+    ethUSDTPredictedVal = generatePredictions(ethUSDTDataHolder);    
+    
+    btcUSDTavgPrice = (btcUSDTDataHolder[btcUSDTDataHolder.size()-1].avgAsk + btcUSDTDataHolder[btcUSDTDataHolder.size()-1].avgBid) /2;
+    dogeBTCavgPrice = (dogeBTCDataHolder[dogeBTCDataHolder.size()-1].avgAsk + dogeBTCDataHolder[dogeBTCDataHolder.size()-1].avgBid) /2;
+    ethBTCavgPrice = (ethBTCDataHolder[ethBTCDataHolder.size()-1].avgAsk + ethBTCDataHolder[ethBTCDataHolder.size()-1].avgBid) /2;
+    dogeUSDTavgPrice = (dogeUSDTDataHolder[dogeUSDTDataHolder.size()-1].avgAsk + dogeUSDTDataHolder[dogeUSDTDataHolder.size()-1].avgBid) /2;
+    ethUSDTavgPrice = (ethUSDTDataHolder[ethUSDTDataHolder.size()-1].avgAsk + ethUSDTDataHolder[ethUSDTDataHolder.size()-1].avgBid) /2;
+    
     // wallet always start with BTC only
     if(wallet.currencies["BTC"] > 0){
-        btcUSDTPredictedVal = generatePredictions(btcUSDTDataHolder);
-        dogeBTCPredictedVal = generatePredictions(dogeBTCDataHolder);
-        ethBTCPredictedVal = generatePredictions(ethBTCDataHolder);
-        
-        btcUSDTavgPrice = (btcUSDTDataHolder[btcUSDTDataHolder.size()-1].avgAsk + btcUSDTDataHolder[btcUSDTDataHolder.size()-1].avgBid) /2;
-        dogeBTCavgPrice = (dogeBTCDataHolder[dogeBTCDataHolder.size()-1].avgAsk + dogeBTCDataHolder[dogeBTCDataHolder.size()-1].avgBid) /2;
-        ethBTCavgPrice = (ethBTCDataHolder[ethBTCDataHolder.size()-1].avgAsk + ethBTCDataHolder[ethBTCDataHolder.size()-1].avgBid) /2;
-        
         //btcUSDT
         if (btcUSDTPredictedVal > btcUSDTavgPrice)
         {
@@ -386,6 +400,63 @@ void MerkelMain::checkEligibleOrder(){
             generateOfferWithPredictions("ETH/BTC",ethBTCPredictedVal);
         }
     }
+
+    if(wallet.currencies["USDT"] > 0){
+        if (btcUSDTPredictedVal > btcUSDTavgPrice)
+        {
+            generateBidWithPredictions("BTC/USDT",btcUSDTPredictedVal);
+        } else{
+            generateOfferWithPredictions("BTC/USDT",btcUSDTPredictedVal);
+        }
+
+        if (dogeUSDTPredictedVal > dogeUSDTavgPrice)
+        {
+            generateBidWithPredictions("DOGE/USDT",dogeUSDTPredictedVal);
+        } else{
+            generateOfferWithPredictions("DOGE/USDT",dogeUSDTPredictedVal);
+        }
+
+        if (ethUSDTPredictedVal > ethUSDTavgPrice)
+        {
+            generateBidWithPredictions("ETH/USDT",ethUSDTPredictedVal);
+        } else{
+            generateOfferWithPredictions("ETH/USDT",ethUSDTPredictedVal);
+        }
+    }
+
+    if(wallet.currencies["ETH"] > 0){
+        if (ethUSDTPredictedVal > ethUSDTavgPrice)
+        {
+            generateBidWithPredictions("ETH/USDT",ethUSDTPredictedVal);
+        } else{
+            generateOfferWithPredictions("ETH/USDT",ethUSDTPredictedVal);
+        }
+
+        if (ethBTCPredictedVal > ethBTCavgPrice)
+        {
+            generateBidWithPredictions("ETH/BTC",ethBTCPredictedVal);
+        } else{
+            generateOfferWithPredictions("ETH/BTC",ethBTCPredictedVal);
+        }
+    }
+
+    if(wallet.currencies["DOGE"] > 0){
+        if (dogeUSDTPredictedVal > dogeUSDTavgPrice)
+        {
+            generateBidWithPredictions("DOGE/USDT",dogeUSDTPredictedVal);
+        } else{
+            generateOfferWithPredictions("DOGE/USDT",dogeUSDTPredictedVal);
+        }
+
+        //dogeBTC
+        if (dogeBTCPredictedVal > dogeBTCavgPrice)
+        {
+            generateBidWithPredictions("DOGE/BTC",dogeBTCPredictedVal);
+        } else{
+            generateOfferWithPredictions("DOGE/BTC",dogeBTCPredictedVal);
+        }
+    }
+    
 }
 
 // When bidding usually want to take highest maximum bid.
@@ -480,14 +551,14 @@ void MerkelMain::generateBidWithPredictions(std::string productName, double pred
         }  
     }
     
-    //matching
-    std::vector<OrderBookEntry> sales = orderBook.matchAsksToBids(productName, currentTime);
-    for(OrderBookEntry& sale : sales)
-    {   
-        if(sale.username == "simuser")
-        {
-        }
-    }
+    // //matching
+    // std::vector<OrderBookEntry> sales = orderBook.matchAsksToBids(productName, currentTime);
+    // for(OrderBookEntry& sale : sales)
+    // {   
+    //     if(sale.username == "simuser")
+    //     {
+    //     }
+    // }
 
     // currentTime = orderBook.getNextTime(currentTime);
     
