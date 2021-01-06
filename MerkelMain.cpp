@@ -225,6 +225,8 @@ void MerkelMain::generateDataHolder(){
         for(OrderBookEntry bidEntry : bidEntries){
             bidVol += bidEntry.amount;
         }
+
+        std::cout << "productName : " << p << " askVol : " << askVol << " bidVol : " << bidVol << std::endl; 
         double avgBid = orderBook.getTotalPrice(bidEntries)/bidEntries.size();
 
         DataHolder dh {
@@ -569,14 +571,12 @@ void MerkelMain::generateOfferWithPredictions(std::string productName, double pr
             // predictions = generatePredictions(dogeUSDTDataHolder);
             entries = orderBook.getOrders(OrderBookType::bid, "DOGE/USDT", currentTime );
             std::sort(entries.begin(), entries.end(), OrderBookEntry::compareByPriceDesc);
-
         }
 
         if(productName == "ETH/BTC"){
             // predictions = generatePredictions(ethBTCDataHolder);
             entries = orderBook.getOrders(OrderBookType::bid, "ETH/BTC", currentTime );
             std::sort(entries.begin(), entries.end(), OrderBookEntry::compareByPriceDesc);
-
         }
 
         if(productName == "ETH/USDT"){
