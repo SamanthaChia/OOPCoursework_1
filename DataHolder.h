@@ -8,15 +8,15 @@ class DataHolder{
         DataHolder(
             std::string _product,
             double _avgAsk,
-            int askVol,
+            double askVol,
             double _avgBid,
-            int bidVol
+            double bidVol
         );
 
         std::string product;
         double avgAsk;
         double avgBid;
-        int askVol;
-        int bidVol;
+        double askVol;
+        double bidVol;
 
 };
