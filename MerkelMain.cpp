@@ -16,13 +16,7 @@ void MerkelMain::init(){
     
     int input;
     currentTime = orderBook.getEarliestTime();
-
-    logBot.open("AssetsLog.csv", std::ofstream::out | std::ofstream::trunc);
-    logBot.close();
-
-    logBot.open("AllSalesLog.csv", std::ofstream::out | std::ofstream::trunc);
-    logBot.close();
-
+    ensureLogFilesEmpty();
     wallet.insertCurrency("BTC", 10);
     while(true){
         printMenu();
@@ -70,6 +64,8 @@ void MerkelMain::printMarketStats(){
         std::vector<OrderBookEntry> bidEntries = orderBook.getOrders(OrderBookType::bid, p, currentTime );
         
         std::cout <<"Bids seen : " << bidEntries.size() << std::endl;
+        std::cout << "Max bid: " << OrderBook::getHighPrice(bidEntries) << std::endl;
+        std::cout << "Min bid: " << OrderBook::getLowPrice(bidEntries) << std::endl;
         std::cout << "Asks seen: " << entries.size() << std::endl;
         std::cout << "Max ask: " << OrderBook::getHighPrice(entries) << std::endl;
         std::cout << "Min ask: " << OrderBook::getLowPrice(entries) << std::endl;
@@ -661,6 +657,17 @@ void MerkelMain::generateOfferWithPredictions(std::string productName, double pr
 
 }
 
+void MerkelMain::ensureLogFilesEmpty(){
+    logBot.open("AssetsLog.csv", std::ofstream::out | std::ofstream::trunc);
+    logBot.close();
+
+    logBot.open("AllSalesLog.csv", std::ofstream::out | std::ofstream::trunc);
+    logBot.close();
+
+    logBot.open("SuccessfulSalesLog.csv", std::ofstream::out | std::ofstream::trunc);
+    logBot.close();
+}
+
 void MerkelMain::createAssetLogs(){
     //record assets for each timestamp
     logBot.open("AssetsLog.csv", std::ofstream::out | std::ofstream::app);
@@ -682,8 +689,13 @@ void MerkelMain::createAllSalesLogs(OrderBookEntry obe){
     logBot.close();
 }
 
-void MerkelMain::createSuccessfulSalesLogs(){
+void MerkelMain::createSuccessfulSalesLogs(OrderBookEntry sale){
     // record ONLY successful bids and asks 
     logBot.open("SuccessfulSalesLog.csv", std::ofstream::out | std::ofstream::app);
     logBot << "Time : " << currentTime << std::endl;
+    logBot << "Product Type : " << sale.orderBookTypeToString(sale.orderType) << std::endl;
+    logBot << "Product Name : " << sale.product << std::endl;
+    logBot << "Product Price : " << sale.price << std::endl;
+    logBot << "Product Amount : " << sale.amount << std::endl; 
+    logBot << " " << std::endl;
 }
