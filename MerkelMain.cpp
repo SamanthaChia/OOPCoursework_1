@@ -266,7 +266,6 @@ double MerkelMain::generatePredictions(std::vector<DataHolder> productData){
         
     }
 
-
         // std::cout << "Product: " << productData[0].product << std::endl;
         if(currentTime == orderBook.getEarliestTime()){
             b1 = 0;
@@ -317,6 +316,7 @@ void MerkelMain::checkEligibleOrder(){
     double btcUSDTPredictedVal, dogeBTCPredictedVal, ethBTCPredictedVal, dogeUSDTPredictedVal, ethUSDTPredictedVal;
     double btcUSDTavgPrice, dogeBTCavgPrice, ethBTCavgPrice, dogeUSDTavgPrice, ethUSDTavgPrice;
 
+    
     btcUSDTPredictedVal = generatePredictions(btcUSDTDataHolder);
     dogeBTCPredictedVal = generatePredictions(dogeBTCDataHolder);
     ethBTCPredictedVal = generatePredictions(ethBTCDataHolder);
@@ -329,66 +329,156 @@ void MerkelMain::checkEligibleOrder(){
     dogeUSDTavgPrice = (dogeUSDTDataHolder[dogeUSDTDataHolder.size()-1].avgAsk + dogeUSDTDataHolder[dogeUSDTDataHolder.size()-1].avgBid) /2;
     ethUSDTavgPrice = (ethUSDTDataHolder[ethUSDTDataHolder.size()-1].avgAsk + ethUSDTDataHolder[ethUSDTDataHolder.size()-1].avgBid) /2;
     
+    
+    // for(std::string const& p : orderBook.getKnownProducts()){
+    //     std::vector<OrderBookEntry> askEntries = orderBook.getOrders(OrderBookType::ask, p, currentTime );
+    //     std::vector<OrderBookEntry> bidEntries = orderBook.getOrders(OrderBookType::bid, p, currentTime );
+    //     double lowestAskPrice = OrderBook::getLowPrice(askEntries);
+    //     double highestBidPrice = OrderBook::getHighPrice(bidEntries);
+    //     double spreadVal = ((lowestAskPrice - highestBidPrice)/lowestAskPrice) * 100;
+    // }
+
     // wallet always start with BTC only
     if(wallet.currencies["BTC"] > 0){
+
         //btcUSDT
         if (btcUSDTPredictedVal < btcUSDTavgPrice)
         {
-            generateOfferWithPredictions("BTC/USDT",btcUSDTPredictedVal);
+            std::vector<OrderBookEntry> askEntries = orderBook.getOrders(OrderBookType::ask, "BTC/USDT", currentTime );
+            std::vector<OrderBookEntry> bidEntries = orderBook.getOrders(OrderBookType::bid, "BTC/USDT", currentTime );
+            double lowestAskPrice = OrderBook::getLowPrice(askEntries);
+            double highestBidPrice = OrderBook::getHighPrice(bidEntries);
+            double spreadVal = ((lowestAskPrice - highestBidPrice)/lowestAskPrice) * 100;
+            if(spreadVal < 0.02){
+                generateOfferWithPredictions("BTC/USDT",btcUSDTPredictedVal);
+            }
         }
         
-        //dogeBTC
+        // dogeBTC
         if (dogeBTCPredictedVal > dogeBTCavgPrice)
         {
-            generateBidWithPredictions("DOGE/BTC",dogeBTCPredictedVal);
+            std::vector<OrderBookEntry> askEntries = orderBook.getOrders(OrderBookType::ask, "DOGE/BTC", currentTime );
+            std::vector<OrderBookEntry> bidEntries = orderBook.getOrders(OrderBookType::bid, "DOGE/BTC", currentTime );
+            double lowestAskPrice = OrderBook::getLowPrice(askEntries);
+            double highestBidPrice = OrderBook::getHighPrice(bidEntries);
+            double spreadVal = ((lowestAskPrice - highestBidPrice)/lowestAskPrice) * 100;
+            if(spreadVal < 0.02){
+                generateBidWithPredictions("DOGE/BTC",dogeBTCPredictedVal);
+            }            
         }
 
         //ethBTC
         if (ethBTCPredictedVal > ethBTCavgPrice)
         {
-            generateBidWithPredictions("ETH/BTC",ethBTCPredictedVal);
+            std::vector<OrderBookEntry> askEntries = orderBook.getOrders(OrderBookType::ask, "ETH/BTC", currentTime );
+            std::vector<OrderBookEntry> bidEntries = orderBook.getOrders(OrderBookType::bid, "ETH/BTC", currentTime );
+            double lowestAskPrice = OrderBook::getLowPrice(askEntries);
+            double highestBidPrice = OrderBook::getHighPrice(bidEntries);
+            double spreadVal = ((lowestAskPrice - highestBidPrice)/lowestAskPrice) * 100;
+            if(spreadVal < 0.02){
+                generateBidWithPredictions("ETH/BTC",ethBTCPredictedVal);
+            }
         }
     }
 
     if(wallet.currencies["USDT"] > 0){
+
+        //btcUSDT
         if (btcUSDTPredictedVal > btcUSDTavgPrice)
         {
-            generateBidWithPredictions("BTC/USDT",btcUSDTPredictedVal);
+            std::vector<OrderBookEntry> askEntries = orderBook.getOrders(OrderBookType::ask, "BTC/USDT", currentTime );
+            std::vector<OrderBookEntry> bidEntries = orderBook.getOrders(OrderBookType::bid, "BTC/USDT", currentTime );
+            double lowestAskPrice = OrderBook::getLowPrice(askEntries);
+            double highestBidPrice = OrderBook::getHighPrice(bidEntries);
+            double spreadVal = ((lowestAskPrice - highestBidPrice)/lowestAskPrice) * 100;
+            if(spreadVal < 0.02){
+                generateBidWithPredictions("BTC/USDT",btcUSDTPredictedVal);
+            }            
         }
 
+        //dogeUSDT
         if (dogeUSDTPredictedVal > dogeUSDTavgPrice)
         {
-            generateBidWithPredictions("DOGE/USDT",dogeUSDTPredictedVal);
+            std::vector<OrderBookEntry> askEntries = orderBook.getOrders(OrderBookType::ask, "DOGE/USDT", currentTime );
+            std::vector<OrderBookEntry> bidEntries = orderBook.getOrders(OrderBookType::bid, "DOGE/USDT", currentTime );
+            double lowestAskPrice = OrderBook::getLowPrice(askEntries);
+            double highestBidPrice = OrderBook::getHighPrice(bidEntries);
+            double spreadVal = ((lowestAskPrice - highestBidPrice)/lowestAskPrice) * 100;
+            if(spreadVal < 0.02){
+                generateBidWithPredictions("DOGE/USDT",dogeUSDTPredictedVal);
+            } 
         }
 
+        //ethUSDT
         if (ethUSDTPredictedVal > ethUSDTavgPrice)
         {
-            generateBidWithPredictions("ETH/USDT",ethUSDTPredictedVal);
+            std::vector<OrderBookEntry> askEntries = orderBook.getOrders(OrderBookType::ask, "ETH/USDT", currentTime );
+            std::vector<OrderBookEntry> bidEntries = orderBook.getOrders(OrderBookType::bid, "ETH/USDT", currentTime );
+            double lowestAskPrice = OrderBook::getLowPrice(askEntries);
+            double highestBidPrice = OrderBook::getHighPrice(bidEntries);
+            double spreadVal = ((lowestAskPrice - highestBidPrice)/lowestAskPrice) * 100;
+            if(spreadVal < 0.02){
+                generateBidWithPredictions("ETH/USDT",ethUSDTPredictedVal);
+            }             
         }
     }
 
     if(wallet.currencies["ETH"] > 0){
+
+        //ethUSDT
         if (ethUSDTPredictedVal < ethUSDTavgPrice)
         {
-            generateOfferWithPredictions("ETH/USDT",ethUSDTPredictedVal);
+            std::vector<OrderBookEntry> askEntries = orderBook.getOrders(OrderBookType::ask, "ETH/USDT", currentTime );
+            std::vector<OrderBookEntry> bidEntries = orderBook.getOrders(OrderBookType::bid, "ETH/USDT", currentTime );
+            double lowestAskPrice = OrderBook::getLowPrice(askEntries);
+            double highestBidPrice = OrderBook::getHighPrice(bidEntries);
+            double spreadVal = ((lowestAskPrice - highestBidPrice)/lowestAskPrice) * 100;
+            if(spreadVal < 0.02){
+                generateOfferWithPredictions("ETH/USDT",ethUSDTPredictedVal);
+            }                   
+            
         }
 
+        //ethBTC
         if (ethBTCPredictedVal < ethBTCavgPrice)
         {
-            generateOfferWithPredictions("ETH/BTC",ethBTCPredictedVal);
+            std::vector<OrderBookEntry> askEntries = orderBook.getOrders(OrderBookType::ask, "ETH/BTC", currentTime );
+            std::vector<OrderBookEntry> bidEntries = orderBook.getOrders(OrderBookType::bid, "ETH/BTC", currentTime );
+            double lowestAskPrice = OrderBook::getLowPrice(askEntries);
+            double highestBidPrice = OrderBook::getHighPrice(bidEntries);
+            double spreadVal = ((lowestAskPrice - highestBidPrice)/lowestAskPrice) * 100;
+            if(spreadVal < 0.02){
+                generateOfferWithPredictions("ETH/BTC",ethBTCPredictedVal);
+            }
         }
     }
 
     if(wallet.currencies["DOGE"] > 0){
+
+        //dogeUSDT
         if (dogeUSDTPredictedVal < dogeUSDTavgPrice)
         {
-            generateOfferWithPredictions("DOGE/USDT",dogeUSDTPredictedVal);
+            std::vector<OrderBookEntry> askEntries = orderBook.getOrders(OrderBookType::ask, "DOGE/USDT", currentTime );
+            std::vector<OrderBookEntry> bidEntries = orderBook.getOrders(OrderBookType::bid, "DOGE/USDT", currentTime );
+            double lowestAskPrice = OrderBook::getLowPrice(askEntries);
+            double highestBidPrice = OrderBook::getHighPrice(bidEntries);
+            double spreadVal = ((lowestAskPrice - highestBidPrice)/lowestAskPrice) * 100;
+            if(spreadVal < 0.02){
+                generateOfferWithPredictions("DOGE/USDT",dogeUSDTPredictedVal);
+            } 
         }
 
         //dogeBTC
         if (dogeBTCPredictedVal < dogeBTCavgPrice)
         {
-            generateOfferWithPredictions("DOGE/BTC",dogeBTCPredictedVal);
+            std::vector<OrderBookEntry> askEntries = orderBook.getOrders(OrderBookType::ask, "DOGE/BTC", currentTime );
+            std::vector<OrderBookEntry> bidEntries = orderBook.getOrders(OrderBookType::bid, "DOGE/BTC", currentTime );
+            double lowestAskPrice = OrderBook::getLowPrice(askEntries);
+            double highestBidPrice = OrderBook::getHighPrice(bidEntries);
+            double spreadVal = ((lowestAskPrice - highestBidPrice)/lowestAskPrice) * 100;
+            if(spreadVal < 0.02){
+                generateOfferWithPredictions("DOGE/BTC",dogeBTCPredictedVal);
+            } 
         }
     }
     
