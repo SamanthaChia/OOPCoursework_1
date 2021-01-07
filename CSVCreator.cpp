@@ -1,5 +1,4 @@
 #include "CSVCreator.h"
-#include "Wallet.h"
 #include <iostream>
 #include <fstream>
 
