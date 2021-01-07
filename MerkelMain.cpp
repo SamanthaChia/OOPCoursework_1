@@ -17,6 +17,12 @@ void MerkelMain::init(){
     int input;
     currentTime = orderBook.getEarliestTime();
 
+    logBot.open("AssetsLog.csv", std::ofstream::out | std::ofstream::trunc);
+    logBot.close();
+
+    logBot.open("AllSalesLog.csv", std::ofstream::out | std::ofstream::trunc);
+    logBot.close();
+
     wallet.insertCurrency("BTC", 10);
     while(true){
         printMenu();
@@ -656,8 +662,6 @@ void MerkelMain::generateOfferWithPredictions(std::string productName, double pr
 }
 
 void MerkelMain::createAssetLogs(){
-    std::ofstream logBot;
-
     //record assets for each timestamp
     logBot.open("AssetsLog.csv", std::ofstream::out | std::ofstream::app);
     logBot << "Time : " << currentTime << std::endl;
@@ -667,8 +671,6 @@ void MerkelMain::createAssetLogs(){
 }
 
 void MerkelMain::createAllSalesLogs(OrderBookEntry obe){
-    std::ofstream logBot;
-
     // record all bids and asks 
     logBot.open("AllSalesLog.csv", std::ofstream::out | std::ofstream::app);
     logBot << "Time : " << currentTime << std::endl;
@@ -681,8 +683,6 @@ void MerkelMain::createAllSalesLogs(OrderBookEntry obe){
 }
 
 void MerkelMain::createSuccessfulSalesLogs(){
-    std::ofstream logBot;
-
     // record ONLY successful bids and asks 
     logBot.open("SuccessfulSalesLog.csv", std::ofstream::out | std::ofstream::app);
     logBot << "Time : " << currentTime << std::endl;
