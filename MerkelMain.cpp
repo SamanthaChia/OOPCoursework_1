@@ -64,8 +64,6 @@ void MerkelMain::printMarketStats(){
         std::vector<OrderBookEntry> bidEntries = orderBook.getOrders(OrderBookType::bid, p, currentTime );
         
         std::cout <<"Bids seen : " << bidEntries.size() << std::endl;
-        std::cout << "Max bid: " << OrderBook::getHighPrice(bidEntries) << std::endl;
-        std::cout << "Min bid: " << OrderBook::getLowPrice(bidEntries) << std::endl;
         std::cout << "Asks seen: " << entries.size() << std::endl;
         std::cout << "Max ask: " << OrderBook::getHighPrice(entries) << std::endl;
         std::cout << "Min ask: " << OrderBook::getLowPrice(entries) << std::endl;
@@ -163,6 +161,7 @@ void MerkelMain::gotoNextTimeFrame(){
             if(sale.username == "simuser")
             {
                 wallet.processSale(sale);
+                createSuccessfulSalesLogs(sale);
             }
         }
     }
@@ -179,8 +178,8 @@ void MerkelMain::procesUserOption(int userOption){
             automatePredictionBot();
             checkEligibleOrder();
             gotoNextTimeFrame();
-            nextCurrentTime = orderBook.getNextTime(currentTime);
             createAssetLogs();
+            nextCurrentTime = orderBook.getNextTime(currentTime);
             std::cout << "================ " << std::endl;
             std::cout << "Current time is: " << currentTime << std::endl;
             if(nextCurrentTime == orderBook.getEarliestTime()){
@@ -690,6 +689,11 @@ void MerkelMain::createAllSalesLogs(OrderBookEntry obe){
 }
 
 void MerkelMain::createSuccessfulSalesLogs(OrderBookEntry sale){
+    std::vector<OrderBookEntry> askEntries = orderBook.getOrders(OrderBookType::ask, sale.product, currentTime );
+    std::vector<OrderBookEntry> bidEntries = orderBook.getOrders(OrderBookType::bid, sale.product, currentTime );
+    double avgAsk = orderBook.getTotalPrice(askEntries) /askEntries.size();
+    double avgBid = orderBook.getTotalPrice(bidEntries)/bidEntries.size();
+  
     // record ONLY successful bids and asks 
     logBot.open("SuccessfulSalesLog.csv", std::ofstream::out | std::ofstream::app);
     logBot << "Time : " << currentTime << std::endl;
@@ -697,5 +701,7 @@ void MerkelMain::createSuccessfulSalesLogs(OrderBookEntry sale){
     logBot << "Product Name : " << sale.product << std::endl;
     logBot << "Product Price : " << sale.price << std::endl;
     logBot << "Product Amount : " << sale.amount << std::endl; 
+    logBot << "Average Ask : " << avgAsk << std::endl;
+    logBot << "Average Bid : " << avgBid << std::endl;
     logBot << " " << std::endl;
 }

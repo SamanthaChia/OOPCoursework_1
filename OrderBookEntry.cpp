@@ -33,5 +33,12 @@ std::string OrderBookEntry::orderBookTypeToString(OrderBookType obt){
     if (obt == OrderBookType::bid){
         return "bid";
     }
+    if (obt == OrderBookType::bidsale){
+        return "bid";
+    }
+    if (obt == OrderBookType::asksale){
+        return "ask";
+    }
+
     return "unknown";
 }
