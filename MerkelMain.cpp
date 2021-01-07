@@ -704,4 +704,7 @@ void MerkelMain::createSuccessfulSalesLogs(OrderBookEntry sale){
     logBot << "Average Ask : " << avgAsk << std::endl;
     logBot << "Average Bid : " << avgBid << std::endl;
     logBot << " " << std::endl;
+    logBot.close();
+
 }
+
