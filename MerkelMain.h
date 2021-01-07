@@ -44,6 +44,7 @@ class MerkelMain{
         void generateOfferWithPredictions(std::string productName, double predictedVal);
         void createAssetLogs();
         void createAllSalesLogs(OrderBookEntry obe);
+        void createSuccessfulSalesLogs();
 
 
         std::string currentTime,nextCurrentTime;

@@ -679,3 +679,11 @@ void MerkelMain::createAllSalesLogs(OrderBookEntry obe){
     logBot << " " << std::endl;
     logBot.close();
 }
+
+void MerkelMain::createSuccessfulSalesLogs(){
+    std::ofstream logBot;
+
+    // record ONLY successful bids and asks 
+    logBot.open("SuccessfulSalesLog.csv", std::ofstream::out | std::ofstream::app);
+    logBot << "Time : " << currentTime << std::endl;
+}
