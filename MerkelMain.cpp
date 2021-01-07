@@ -17,7 +17,6 @@ void MerkelMain::init(){
     currentTime = orderBook.getEarliestTime();
 
     wallet.insertCurrency("BTC", 10);
-    automatePredictionBot();
     while(true){
         printMenu();
         input = getUserOption();
@@ -27,18 +26,8 @@ void MerkelMain::init(){
 
 void MerkelMain::printMenu(){
 
-    // 1 print help
-    std::cout << "1: Print help. " << std::endl;
-    // 2 print exchange stats
-    std::cout << "2 : Print exchange stats. " << std::endl;
-    // 3 make an offer
-    std::cout << "3 : Make an offer. " << std::endl;
-    // 4 make a bid
-    std::cout << "4 : Make a bid. " << std::endl;
-    // 5 printi wallet
-    std::cout << "5 : Show wallet. " << std::endl;
-    // 6 continue
-    std::cout << "6 : Continue. " << std::endl;
+    std::cout << "Welcome to MerkelrexBot!" <<std::endl;
+    std::cout << "The aim of the bot is to make money. To analyse bids and make offers" << std::endl;
 
     std::cout << "================ " << std::endl;
 
@@ -47,9 +36,9 @@ void MerkelMain::printMenu(){
 
 int MerkelMain::getUserOption()
 {
-    int userOption = 0;
+    int userOption;
     std::string line;
-    std::cout << "Please enter a value from 1 - 6" << std::endl;
+    std::cout << "To start the bot, please enter 1" <<std::endl;
     std::getline(std::cin, line);
     try{
         userOption = std::stoi(line);
@@ -185,26 +174,17 @@ void MerkelMain::gotoNextTimeFrame(){
 }
 
 void MerkelMain::procesUserOption(int userOption){
-    if(userOption <= 0 || userOption > 6){
+    if(userOption <= 0 || userOption > 1){
         std::cout << "You have entered an invalid option." << std::endl;
     }
     else if(userOption == 1){
-        printHelp();
-    }
-    else if(userOption == 2){
-        printMarketStats();
-    }
-    else if(userOption == 3){
-        enterAsk();
-    }
-    else if(userOption == 4){
-        enterBid();
-    }
-    else if(userOption == 5){
-        printWallet();
-    }
-    else if(userOption == 6){
-        gotoNextTimeFrame();
+        std::cout << "Starting MerkelrexBot " << std::endl;
+        while(true){
+            automatePredictionBot();
+            checkEligibleOrder();
+            gotoNextTimeFrame();
+            printWallet();
+        }
     }
 }
 
@@ -226,7 +206,7 @@ void MerkelMain::generateDataHolder(){
             bidVol += bidEntry.amount;
         }
 
-        std::cout << "productName : " << p << " askVol : " << askVol << " bidVol : " << bidVol << std::endl; 
+        // std::cout << "productName : " << p << " askVol : " << askVol << " bidVol : " << bidVol << std::endl; 
         double avgBid = orderBook.getTotalPrice(bidEntries)/bidEntries.size();
 
         DataHolder dh {
@@ -269,27 +249,6 @@ void MerkelMain::automatePredictionBot(){
         currentTime = orderBook.getNextTime(currentTime);
         i++;
     }
-    for(std::string const& p : orderBook.getKnownProducts()){
-        if(p == "BTC/USDT"){
-            generatePredictions(btcUSDTDataHolder);
-        }
-
-        if(p == "DOGE/BTC"){
-            generatePredictions(dogeBTCDataHolder);
-        }
-
-        if(p == "DOGE/USDT"){
-            generatePredictions(dogeUSDTDataHolder);
-        }
-
-        if(p == "ETH/BTC"){
-            generatePredictions(ethBTCDataHolder);
-        }
-
-        if(p == "ETH/USDT"){
-            generatePredictions(ethUSDTDataHolder);
-        }
-    }
 }
 
 //used to be void changed to double to return predictedValue
@@ -307,14 +266,14 @@ double MerkelMain::generatePredictions(std::vector<DataHolder> productData){
         // x = ratio between askVol and bidVol
         // y = avg growth/loss ratio
         x.push_back(askBidRatio);
-        std::cout << "askBidRatio : " << askBidRatio << std::endl;
+        // std::cout << "askBidRatio : " << askBidRatio << std::endl;
         y.push_back(avgGrowthRatio);
-        std::cout << "avgGrowthRatio : " << avgGrowthRatio << std::endl;
+        // std::cout << "avgGrowthRatio : " << avgGrowthRatio << std::endl;
         
     }
 
 
-        std::cout << "Product: " << productData[0].product << std::endl;
+        // std::cout << "Product: " << productData[0].product << std::endl;
         if(currentTime == orderBook.getEarliestTime()){
             b1 = 0;
             b0 = 0;
@@ -341,12 +300,12 @@ double MerkelMain::generatePredictions(std::vector<DataHolder> productData){
             return abs(lhs.error) < abs(rhs.error);
         });
 
-        std::cout << "After sorting = b0: " << errorVal[0].b0 << " b1 : " << errorVal[0].b1 << " error : " << errorVal[0].error << std::endl;
+        // std::cout << "After sorting = b0: " << errorVal[0].b0 << " b1 : " << errorVal[0].b1 << " error : " << errorVal[0].error << std::endl;
         
         
-        std::cout << "x val : " << x[x.size()-1] <<std::endl;
+        // std::cout << "x val : " << x[x.size()-1] <<std::endl;
         currentPrice = (productData[productData.size()-1].avgAsk + productData[productData.size()-1].avgBid)/2;
-        std::cout << "currentPrice Value : " << currentPrice << std::endl;
+        // std::cout << "currentPrice Value : " << currentPrice << std::endl;
         
         // x[x.size()-1] because latest x value,
         // + currentPrice again because it will  only be % of the currentPrice
@@ -354,8 +313,8 @@ double MerkelMain::generatePredictions(std::vector<DataHolder> productData){
         predictedValue= (errorVal[0].b0+ errorVal[0].b1 * x[x.size()-1] ) * currentPrice + currentPrice ;
 
         
-        std::cout << "Predicted Value : " << predictedValue << std::endl;
-        std::cout << " " <<std::endl;
+        // std::cout << "Predicted Value : " << predictedValue << std::endl;
+        // std::cout << " " <<std::endl;
 
         return predictedValue;
 }
@@ -532,18 +491,6 @@ void MerkelMain::generateBidWithPredictions(std::string productName, double pred
             }
         }  
     }
-    
-    // //matching
-    // std::vector<OrderBookEntry> sales = orderBook.matchAsksToBids(productName, currentTime);
-    // for(OrderBookEntry& sale : sales)
-    // {   
-    //     if(sale.username == "simuser")
-    //     {
-    //     }
-    // }
-
-    // currentTime = orderBook.getNextTime(currentTime);
-    
 }
 
 //remove the bid if a sale is not made. = matchAsksToBids fail
