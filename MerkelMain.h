@@ -42,7 +42,9 @@ class MerkelMain{
         void checkEligibleOrder();
         void generateBidWithPredictions(std::string productName, double predictedVal);
         void generateOfferWithPredictions(std::string productName, double predictedVal);
-        void createLogs();
+        void createAssetLogs();
+        void createAllSalesLogs(OrderBookEntry obe);
+
 
         std::string currentTime,nextCurrentTime;
         std::vector<DataHolder> btcUSDTDataHolder;

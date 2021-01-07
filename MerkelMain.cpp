@@ -178,7 +178,7 @@ void MerkelMain::procesUserOption(int userOption){
             checkEligibleOrder();
             gotoNextTimeFrame();
             nextCurrentTime = orderBook.getNextTime(currentTime);
-            createLogs();
+            createAssetLogs();
             std::cout << "================ " << std::endl;
             std::cout << "Current time is: " << currentTime << std::endl;
             if(nextCurrentTime == orderBook.getEarliestTime()){
@@ -533,6 +533,7 @@ void MerkelMain::generateBidWithPredictions(std::string productName, double pred
     if(wallet.canFulfillOrder(obe))
     {
         orderBook.insertOrder(obe);
+        createAllSalesLogs(obe);
         std::cout <<"Bid has been made " <<std::endl;
 
     } else{
@@ -552,6 +553,7 @@ void MerkelMain::generateBidWithPredictions(std::string productName, double pred
             };
             if(wallet.canFulfillOrder(obe)){
                 orderBook.insertOrder(obe);
+                createAllSalesLogs(obe);
                 std::cout <<"Bid has been made " <<std::endl;
 
             } else{
@@ -618,6 +620,7 @@ void MerkelMain::generateOfferWithPredictions(std::string productName, double pr
             if(wallet.canFulfillOrder(obe))
             {
                 orderBook.insertOrder(obe);
+                createAllSalesLogs(obe);
                 std::cout <<"Ask has been made " <<std::endl;
             }else{
                 std::vector<std::string> currs = CSVReader::tokenise(productName, '/');
@@ -637,6 +640,7 @@ void MerkelMain::generateOfferWithPredictions(std::string productName, double pr
                     
                     if(wallet.canFulfillOrder(obe)){
                         orderBook.insertOrder(obe);
+                        createAllSalesLogs(obe);
                         std::cout <<"Ask has been made " <<std::endl;
 
                     } else{
@@ -651,13 +655,27 @@ void MerkelMain::generateOfferWithPredictions(std::string productName, double pr
 
 }
 
-void MerkelMain::createLogs(){
+void MerkelMain::createAssetLogs(){
     std::ofstream logBot;
 
-    //create AssetsLog
+    //record assets for each timestamp
     logBot.open("AssetsLog.csv", std::ofstream::out | std::ofstream::app);
     logBot << "Time : " << currentTime << std::endl;
     logBot << "Assets : " << std::endl;
     logBot << wallet.toString() << std::endl;
+    logBot.close();
+}
+
+void MerkelMain::createAllSalesLogs(OrderBookEntry obe){
+    std::ofstream logBot;
+
+    // record all bids and asks 
+    logBot.open("AllSalesLog.csv", std::ofstream::out | std::ofstream::app);
+    logBot << "Time : " << currentTime << std::endl;
+    logBot << "Product Type : " << obe.orderBookTypeToString(obe.orderType) << std::endl;
+    logBot << "Product Name : " << obe.product << std::endl;
+    logBot << "Product Price : " << obe.price << std::endl;
+    logBot << "Product Amount : " << obe.amount << std::endl; 
+    logBot << " " << std::endl;
     logBot.close();
 }
