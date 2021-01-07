@@ -646,7 +646,5 @@ void MerkelMain::generateOfferWithPredictions(std::string productName, double pr
         } else{
             std::cout << "No order to be made." << std::endl;
         }
-
-
 }
 
