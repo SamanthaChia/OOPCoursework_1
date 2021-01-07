@@ -44,7 +44,7 @@ class MerkelMain{
         void generateOfferWithPredictions(std::string productName, double predictedVal);
 
 
-        std::string currentTime;
+        std::string currentTime,nextCurrentTime;
         std::vector<DataHolder> btcUSDTDataHolder;
         std::vector<DataHolder> dogeBTCDataHolder;
         std::vector<DataHolder> dogeUSDTDataHolder;

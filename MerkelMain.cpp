@@ -71,41 +71,39 @@ void MerkelMain::printMarketStats(){
 }
 
 void MerkelMain::enterAsk(){
-    // std::cout << "Make an ask - enter the amount: product, price, amount, eg ETH/BTC, 200,0.5 " << std::endl;
-    // std::string input;
-    // std::getline(std::cin, input);
+    std::cout << "Make an ask - enter the amount: product, price, amount, eg ETH/BTC, 200,0.5 " << std::endl;
+    std::string input;
+    std::getline(std::cin, input);
 
-    // std::vector<std::string> tokens = CSVReader::tokenise(input,',');
-    // if(tokens.size() != 3){
-    //     std::cout << "MerkelMain::enterAsk Bad input " << std::endl;
-    // }
+    std::vector<std::string> tokens = CSVReader::tokenise(input,',');
+    if(tokens.size() != 3){
+        std::cout << "MerkelMain::enterAsk Bad input " << std::endl;
+    }
 
-    // else{
-    //     try{
-    //         OrderBookEntry obe = CSVReader::stringsToOBE(
-    //             tokens[1],
-    //             tokens[2],
-    //             currentTime,
-    //             tokens[0],
-    //             OrderBookType::ask
-    //         );
-    //         obe.username = "simuser";
+    else{
+        try{
+            OrderBookEntry obe = CSVReader::stringsToOBE(
+                tokens[1],
+                tokens[2],
+                currentTime,
+                tokens[0],
+                OrderBookType::ask
+            );
+            obe.username = "simuser";
 
-    //         if(wallet.canFulfillOrder(obe))
-    //         {
-    //             std::cout<<"Wallet looks good. " << std::endl;
-    //             orderBook.insertOrder(obe);
-    //         }
-    //         else{
-    //             std::cout<< "Wallet has insufficient funds. " << std::endl;
-    //         }
-    //     }catch(const std::exception& e)
-    //     {
-    //         std::cout << "MerkelMain::enterAsk Bad input " << std::endl;
-    //     }
-    // }
-    // generateBidWithPredictions("ETH/BTC");
-    checkEligibleOrder();
+            if(wallet.canFulfillOrder(obe))
+            {
+                std::cout<<"Wallet looks good. " << std::endl;
+                orderBook.insertOrder(obe);
+            }
+            else{
+                std::cout<< "Wallet has insufficient funds. " << std::endl;
+            }
+        }catch(const std::exception& e)
+        {
+            std::cout << "MerkelMain::enterAsk Bad input " << std::endl;
+        }
+    }
 }
 
 void MerkelMain::enterBid(){
@@ -142,11 +140,6 @@ void MerkelMain::enterBid(){
             std::cout << "MerkelMain::enterBid Bad input " << std::endl;
         }
     }
-    // generateBidWithPredictions("BTC/USDT");
-    // generateBidWithPredictions("DOGE/BTC");
-    // generateBidWithPredictions("DOGE/USDT");
-    // generateBidWithPredictions("ETH/BTC");
-    // generateBidWithPredictions("ETH/USDT");
 
 }
 
@@ -183,7 +176,13 @@ void MerkelMain::procesUserOption(int userOption){
             automatePredictionBot();
             checkEligibleOrder();
             gotoNextTimeFrame();
+            nextCurrentTime = orderBook.getNextTime(currentTime);
             printWallet();
+            std::cout << "================ " << std::endl;
+            std::cout << "Current time is: " << currentTime << std::endl;
+            if(nextCurrentTime == orderBook.getEarliestTime()){
+                break;
+            }
         }
     }
 }
@@ -206,7 +205,6 @@ void MerkelMain::generateDataHolder(){
             bidVol += bidEntry.amount;
         }
 
-        // std::cout << "productName : " << p << " askVol : " << askVol << " bidVol : " << bidVol << std::endl; 
         double avgBid = orderBook.getTotalPrice(bidEntries)/bidEntries.size();
 
         DataHolder dh {
@@ -272,7 +270,6 @@ double MerkelMain::generatePredictions(std::vector<DataHolder> productData){
         
     }
 
-
         // std::cout << "Product: " << productData[0].product << std::endl;
         if(currentTime == orderBook.getEarliestTime()){
             b1 = 0;
@@ -323,6 +320,7 @@ void MerkelMain::checkEligibleOrder(){
     double btcUSDTPredictedVal, dogeBTCPredictedVal, ethBTCPredictedVal, dogeUSDTPredictedVal, ethUSDTPredictedVal;
     double btcUSDTavgPrice, dogeBTCavgPrice, ethBTCavgPrice, dogeUSDTavgPrice, ethUSDTavgPrice;
 
+    
     btcUSDTPredictedVal = generatePredictions(btcUSDTDataHolder);
     dogeBTCPredictedVal = generatePredictions(dogeBTCDataHolder);
     ethBTCPredictedVal = generatePredictions(ethBTCDataHolder);
@@ -335,66 +333,148 @@ void MerkelMain::checkEligibleOrder(){
     dogeUSDTavgPrice = (dogeUSDTDataHolder[dogeUSDTDataHolder.size()-1].avgAsk + dogeUSDTDataHolder[dogeUSDTDataHolder.size()-1].avgBid) /2;
     ethUSDTavgPrice = (ethUSDTDataHolder[ethUSDTDataHolder.size()-1].avgAsk + ethUSDTDataHolder[ethUSDTDataHolder.size()-1].avgBid) /2;
     
+
     // wallet always start with BTC only
     if(wallet.currencies["BTC"] > 0){
+
         //btcUSDT
         if (btcUSDTPredictedVal < btcUSDTavgPrice)
         {
-            generateOfferWithPredictions("BTC/USDT",btcUSDTPredictedVal);
+            std::vector<OrderBookEntry> askEntries = orderBook.getOrders(OrderBookType::ask, "BTC/USDT", currentTime );
+            std::vector<OrderBookEntry> bidEntries = orderBook.getOrders(OrderBookType::bid, "BTC/USDT", currentTime );
+            double lowestAskPrice = OrderBook::getLowPrice(askEntries);
+            double highestBidPrice = OrderBook::getHighPrice(bidEntries);
+            double spreadVal = ((lowestAskPrice - highestBidPrice)/lowestAskPrice) * 100;
+            if(spreadVal < 0.02){
+                generateOfferWithPredictions("BTC/USDT",btcUSDTPredictedVal);
+            }
         }
         
-        //dogeBTC
+        // dogeBTC
         if (dogeBTCPredictedVal > dogeBTCavgPrice)
         {
-            generateBidWithPredictions("DOGE/BTC",dogeBTCPredictedVal);
+            std::vector<OrderBookEntry> askEntries = orderBook.getOrders(OrderBookType::ask, "DOGE/BTC", currentTime );
+            std::vector<OrderBookEntry> bidEntries = orderBook.getOrders(OrderBookType::bid, "DOGE/BTC", currentTime );
+            double lowestAskPrice = OrderBook::getLowPrice(askEntries);
+            double highestBidPrice = OrderBook::getHighPrice(bidEntries);
+            double spreadVal = ((lowestAskPrice - highestBidPrice)/lowestAskPrice) * 100;
+            if(spreadVal < 0.02){
+                generateBidWithPredictions("DOGE/BTC",dogeBTCPredictedVal);
+            }            
         }
 
         //ethBTC
         if (ethBTCPredictedVal > ethBTCavgPrice)
         {
-            generateBidWithPredictions("ETH/BTC",ethBTCPredictedVal);
+            std::vector<OrderBookEntry> askEntries = orderBook.getOrders(OrderBookType::ask, "ETH/BTC", currentTime );
+            std::vector<OrderBookEntry> bidEntries = orderBook.getOrders(OrderBookType::bid, "ETH/BTC", currentTime );
+            double lowestAskPrice = OrderBook::getLowPrice(askEntries);
+            double highestBidPrice = OrderBook::getHighPrice(bidEntries);
+            double spreadVal = ((lowestAskPrice - highestBidPrice)/lowestAskPrice) * 100;
+            if(spreadVal < 0.02){
+                generateBidWithPredictions("ETH/BTC",ethBTCPredictedVal);
+            }
         }
     }
 
     if(wallet.currencies["USDT"] > 0){
+
+        //btcUSDT
         if (btcUSDTPredictedVal > btcUSDTavgPrice)
         {
-            generateBidWithPredictions("BTC/USDT",btcUSDTPredictedVal);
+            std::vector<OrderBookEntry> askEntries = orderBook.getOrders(OrderBookType::ask, "BTC/USDT", currentTime );
+            std::vector<OrderBookEntry> bidEntries = orderBook.getOrders(OrderBookType::bid, "BTC/USDT", currentTime );
+            double lowestAskPrice = OrderBook::getLowPrice(askEntries);
+            double highestBidPrice = OrderBook::getHighPrice(bidEntries);
+            double spreadVal = ((lowestAskPrice - highestBidPrice)/lowestAskPrice) * 100;
+            if(spreadVal < 0.02){
+                generateBidWithPredictions("BTC/USDT",btcUSDTPredictedVal);
+            }            
         }
 
+        //dogeUSDT
         if (dogeUSDTPredictedVal > dogeUSDTavgPrice)
         {
-            generateBidWithPredictions("DOGE/USDT",dogeUSDTPredictedVal);
+            std::vector<OrderBookEntry> askEntries = orderBook.getOrders(OrderBookType::ask, "DOGE/USDT", currentTime );
+            std::vector<OrderBookEntry> bidEntries = orderBook.getOrders(OrderBookType::bid, "DOGE/USDT", currentTime );
+            double lowestAskPrice = OrderBook::getLowPrice(askEntries);
+            double highestBidPrice = OrderBook::getHighPrice(bidEntries);
+            double spreadVal = ((lowestAskPrice - highestBidPrice)/lowestAskPrice) * 100;
+            if(spreadVal < 0.02){
+                generateBidWithPredictions("DOGE/USDT",dogeUSDTPredictedVal);
+            } 
         }
 
+        //ethUSDT
         if (ethUSDTPredictedVal > ethUSDTavgPrice)
         {
-            generateBidWithPredictions("ETH/USDT",ethUSDTPredictedVal);
+            std::vector<OrderBookEntry> askEntries = orderBook.getOrders(OrderBookType::ask, "ETH/USDT", currentTime );
+            std::vector<OrderBookEntry> bidEntries = orderBook.getOrders(OrderBookType::bid, "ETH/USDT", currentTime );
+            double lowestAskPrice = OrderBook::getLowPrice(askEntries);
+            double highestBidPrice = OrderBook::getHighPrice(bidEntries);
+            double spreadVal = ((lowestAskPrice - highestBidPrice)/lowestAskPrice) * 100;
+            if(spreadVal < 0.02){
+                generateBidWithPredictions("ETH/USDT",ethUSDTPredictedVal);
+            }             
         }
     }
 
     if(wallet.currencies["ETH"] > 0){
+
+        //ethUSDT
         if (ethUSDTPredictedVal < ethUSDTavgPrice)
         {
-            generateOfferWithPredictions("ETH/USDT",ethUSDTPredictedVal);
+            std::vector<OrderBookEntry> askEntries = orderBook.getOrders(OrderBookType::ask, "ETH/USDT", currentTime );
+            std::vector<OrderBookEntry> bidEntries = orderBook.getOrders(OrderBookType::bid, "ETH/USDT", currentTime );
+            double lowestAskPrice = OrderBook::getLowPrice(askEntries);
+            double highestBidPrice = OrderBook::getHighPrice(bidEntries);
+            double spreadVal = ((lowestAskPrice - highestBidPrice)/lowestAskPrice) * 100;
+            if(spreadVal < 0.02){
+                generateOfferWithPredictions("ETH/USDT",ethUSDTPredictedVal);
+            }                   
+            
         }
 
+        //ethBTC
         if (ethBTCPredictedVal < ethBTCavgPrice)
         {
-            generateOfferWithPredictions("ETH/BTC",ethBTCPredictedVal);
+            std::vector<OrderBookEntry> askEntries = orderBook.getOrders(OrderBookType::ask, "ETH/BTC", currentTime );
+            std::vector<OrderBookEntry> bidEntries = orderBook.getOrders(OrderBookType::bid, "ETH/BTC", currentTime );
+            double lowestAskPrice = OrderBook::getLowPrice(askEntries);
+            double highestBidPrice = OrderBook::getHighPrice(bidEntries);
+            double spreadVal = ((lowestAskPrice - highestBidPrice)/lowestAskPrice) * 100;
+            if(spreadVal < 0.02){
+                generateOfferWithPredictions("ETH/BTC",ethBTCPredictedVal);
+            }
         }
     }
 
     if(wallet.currencies["DOGE"] > 0){
+
+        //dogeUSDT
         if (dogeUSDTPredictedVal < dogeUSDTavgPrice)
         {
-            generateOfferWithPredictions("DOGE/USDT",dogeUSDTPredictedVal);
+            std::vector<OrderBookEntry> askEntries = orderBook.getOrders(OrderBookType::ask, "DOGE/USDT", currentTime );
+            std::vector<OrderBookEntry> bidEntries = orderBook.getOrders(OrderBookType::bid, "DOGE/USDT", currentTime );
+            double lowestAskPrice = OrderBook::getLowPrice(askEntries);
+            double highestBidPrice = OrderBook::getHighPrice(bidEntries);
+            double spreadVal = ((lowestAskPrice - highestBidPrice)/lowestAskPrice) * 100;
+            if(spreadVal < 0.02){
+                generateOfferWithPredictions("DOGE/USDT",dogeUSDTPredictedVal);
+            } 
         }
 
         //dogeBTC
         if (dogeBTCPredictedVal < dogeBTCavgPrice)
         {
-            generateOfferWithPredictions("DOGE/BTC",dogeBTCPredictedVal);
+            std::vector<OrderBookEntry> askEntries = orderBook.getOrders(OrderBookType::ask, "DOGE/BTC", currentTime );
+            std::vector<OrderBookEntry> bidEntries = orderBook.getOrders(OrderBookType::bid, "DOGE/BTC", currentTime );
+            double lowestAskPrice = OrderBook::getLowPrice(askEntries);
+            double highestBidPrice = OrderBook::getHighPrice(bidEntries);
+            double spreadVal = ((lowestAskPrice - highestBidPrice)/lowestAskPrice) * 100;
+            if(spreadVal < 0.02){
+                generateOfferWithPredictions("DOGE/BTC",dogeBTCPredictedVal);
+            } 
         }
     }
     
@@ -407,27 +487,22 @@ void MerkelMain::generateBidWithPredictions(std::string productName, double pred
 
     std::vector<OrderBookEntry> entries;
         if(productName == "BTC/USDT"){
-            // predictions = generatePredictions(btcUSDTDataHolder);
             entries = orderBook.getOrders(OrderBookType::ask, "BTC/USDT", currentTime );
         }
 
         if(productName == "DOGE/BTC"){
-            // predictions = generatePredictions(dogeBTCDataHolder);
             entries = orderBook.getOrders(OrderBookType::ask, "DOGE/BTC", currentTime );
         }
 
         if(productName == "DOGE/USDT"){
-            // predictions = generatePredictions(dogeUSDTDataHolder);
             entries = orderBook.getOrders(OrderBookType::ask, "DOGE/USDT", currentTime );
         }
 
         if(productName == "ETH/BTC"){
-            // predictions = generatePredictions(ethBTCDataHolder);
             entries = orderBook.getOrders(OrderBookType::ask, "ETH/BTC", currentTime );
         }
 
         if(productName == "ETH/USDT"){
-            // predictions = generatePredictions(ethUSDTDataHolder);
             entries = orderBook.getOrders(OrderBookType::ask, "ETH/USDT", currentTime );
         }
 
@@ -463,31 +538,23 @@ void MerkelMain::generateBidWithPredictions(std::string productName, double pred
         std::vector<std::string> currs = CSVReader::tokenise(productName, '/');
         std::string currency = currs[1];
         for(std::pair<std::string,double> pair : wallet.currencies){
-            std::string currencyNameInWallet = pair.first;
-            if(currencyNameInWallet != currency){
-                std::cout<< "Wallet does not have this currency. " << std::endl;
-                continue;
-            }
-            else if(currencyNameInWallet == currency)
-            {
-                std::cout<<"Wallet unable to handle with max Amount offered in order List, taking max amount you can order. " <<std::endl;
-                walletAmount = pair.second;
-                bidAmount = walletAmount/lowestPrice;
+            std::cout<<"Wallet unable to handle with max Amount offered in order List, taking max amount you can order. " <<std::endl;
+            walletAmount = pair.second;
+            bidAmount = walletAmount/lowestPrice;
 
-                OrderBookEntry obe {
-                    lowestPrice,
-                    bidAmount,
-                    currentTime,
-                    productName,
-                    OrderBookType::bid
-                };
-                 if(wallet.canFulfillOrder(obe)){
-                    orderBook.insertOrder(obe);
-                    std::cout <<"Bid has been made " <<std::endl;
+            OrderBookEntry obe {
+                lowestPrice,
+                bidAmount,
+                currentTime,
+                productName,
+                OrderBookType::bid
+            };
+            if(wallet.canFulfillOrder(obe)){
+                orderBook.insertOrder(obe);
+                std::cout <<"Bid has been made " <<std::endl;
 
-                } else{
-                    std::cout<< "error somewhere " << std::endl;
-                }
+            } else{
+                std::cout<< "error becaue an order has already been made, new wallet value not updated. " << std::endl;
             }
         }  
     }
@@ -501,33 +568,28 @@ void MerkelMain::generateOfferWithPredictions(std::string productName, double pr
     std::vector<OrderBookEntry> entries;
 
         if(productName == "BTC/USDT"){
-            // predictions = generatePredictions(btcUSDTDataHolder);
             entries = orderBook.getOrders(OrderBookType::bid, "BTC/USDT", currentTime );
             std::sort(entries.begin(), entries.end(), OrderBookEntry::compareByPriceDesc);
 
         }
 
         if(productName == "DOGE/BTC"){
-            // predictions = generatePredictions(dogeBTCDataHolder);
             entries = orderBook.getOrders(OrderBookType::bid, "DOGE/BTC", currentTime );
             std::sort(entries.begin(), entries.end(), OrderBookEntry::compareByPriceDesc);
 
         }
 
         if(productName == "DOGE/USDT"){
-            // predictions = generatePredictions(dogeUSDTDataHolder);
             entries = orderBook.getOrders(OrderBookType::bid, "DOGE/USDT", currentTime );
             std::sort(entries.begin(), entries.end(), OrderBookEntry::compareByPriceDesc);
         }
 
         if(productName == "ETH/BTC"){
-            // predictions = generatePredictions(ethBTCDataHolder);
             entries = orderBook.getOrders(OrderBookType::bid, "ETH/BTC", currentTime );
             std::sort(entries.begin(), entries.end(), OrderBookEntry::compareByPriceDesc);
         }
 
         if(productName == "ETH/USDT"){
-            // predictions = generatePredictions(ethUSDTDataHolder);
             entries = orderBook.getOrders(OrderBookType::bid, "ETH/USDT", currentTime );
             std::sort(entries.begin(), entries.end(), OrderBookEntry::compareByPriceDesc);
         }
@@ -536,7 +598,7 @@ void MerkelMain::generateOfferWithPredictions(std::string productName, double pr
             //if entry Price is lower than prediction price, means value of product will go down.
             // example BTC/USDT will go down, USDT Value go up, BTC Value go down.
             if(predictedVal < entry.price) {
-                currentPrice = entry.price;
+                currentPrice = entry.price*0.9999;
                 askingAmount = entry.amount;
                 break;
             }
@@ -559,38 +621,25 @@ void MerkelMain::generateOfferWithPredictions(std::string productName, double pr
             }else{
                 std::vector<std::string> currs = CSVReader::tokenise(productName, '/');
                 std::string currency = currs[0];
-                std::cout<< "currency : " << currency << std::endl;
                 for(std::pair<std::string,double> pair : wallet.currencies){
                     std::string currencyNameInWallet = pair.first;
-                    std::cout << "currencyNameInWallet : " << currencyNameInWallet << std::endl; 
-                    if(currencyNameInWallet != currency){
-                        std::cout<< "Wallet does not have this currency. " << std::endl;
-                        continue;
-                    }
-                    else if(currencyNameInWallet == currency)
-                    {
-                        std::cout<<"Wallet unable to current max Asking amount, recalculating asking amount " <<std::endl;
-                        walletAmount = pair.second;
+                    std::cout<<"Wallet unable to handle current max Asking amount, taking max amount in wallet " <<std::endl;
+                    walletAmount = pair.second;
 
-                        OrderBookEntry obe {
-                            currentPrice,
-                            walletAmount,
-                            currentTime,
-                            productName,
-                            OrderBookType::ask
-                        };
-                        std::cout <<"CurrentPrice : " << currentPrice <<std::endl;
-                        std::cout <<"askingAmount : " << askingAmount <<std::endl;
-                        std::cout <<"currentTime : " << currentTime <<std::endl;
-                        std::cout <<"productName : " << productName <<std::endl;
-                        
-                        if(wallet.canFulfillOrder(obe)){
-                            orderBook.insertOrder(obe);
-                            std::cout <<"Ask has been made " <<std::endl;
+                    OrderBookEntry obe {
+                        currentPrice,
+                        walletAmount,
+                        currentTime,
+                        productName,
+                        OrderBookType::ask
+                    };
+                    
+                    if(wallet.canFulfillOrder(obe)){
+                        orderBook.insertOrder(obe);
+                        std::cout <<"Ask has been made " <<std::endl;
 
-                        } else{
-                            std::cout<< "error somewhere " << std::endl;
-                        }
+                    } else{
+                        std::cout<< "error becaue an order has already been made, new wallet value not updated. " << std::endl;
                     }
                 }  
             }
