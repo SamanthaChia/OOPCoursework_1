@@ -175,7 +175,9 @@ void MerkelMain::procesUserOption(int userOption){
     else if(userOption == 1){
         std::cout << "Starting MerkelrexBot " << std::endl;
         while(true){
+        
             automatePredictionBot();
+            printWallet();
             checkEligibleOrder();
             gotoNextTimeFrame();
             createAssetLogs();
