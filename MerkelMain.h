@@ -54,5 +54,5 @@ class MerkelMain{
         OrderBook orderBook{"20200601.csv"};
 
         Wallet wallet;
-
+        CSVCreator csvCreator;
 };

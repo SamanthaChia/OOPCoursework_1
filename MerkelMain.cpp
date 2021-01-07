@@ -2,6 +2,7 @@
 #include "OrderBookEntry.h"
 #include "CSVReader.h"
 #include "DataHolder.h"
+#include "CSVCreator.h"
 #include <iostream>
 #include <vector>
 #include <limits>
@@ -15,7 +16,7 @@ void MerkelMain::init(){
     
     int input;
     currentTime = orderBook.getEarliestTime();
-
+    CSVCreator::createCSV("AssetsLog.csv");
     wallet.insertCurrency("BTC", 10);
     while(true){
         printMenu();

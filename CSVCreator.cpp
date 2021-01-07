@@ -1,4 +1,5 @@
 #include "CSVCreator.h"
+#include "Wallet.h"
 #include <iostream>
 #include <fstream>
 
@@ -6,6 +7,14 @@ CSVCreator::CSVCreator(){
 
 }
 
-void CSVCreator::creatCSV(std::string csvFileName){
+void CSVCreator::createCSV(std::string csvFileName){
     
+    std::fstream csvFile{csvFileName};
+
+    if(csvFile.is_open()){
+        csvFile << "Assets at ";
+    } else
+    {
+        std::ofstream csvFile{csvFileName};
+    }
 }

@@ -7,5 +7,5 @@
 class CSVCreator{
     public:
         CSVCreator();
-        void creatCSV(std::string csvFileName);
+        void createCSV(std::string csvFileName);
 };
