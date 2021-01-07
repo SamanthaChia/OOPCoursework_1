@@ -1,11 +1,13 @@
 #pragma once
 
 #include <vector>
+#include <fstream>
 #include "OrderBookEntry.h"
 #include "OrderBook.h"
 #include "Wallet.h"
 #include "PredictB0B1.h"
 #include "DataHolder.h"
+
 
 class MerkelMain{
 
@@ -44,6 +46,8 @@ class MerkelMain{
         void generateOfferWithPredictions(std::string productName, double predictedVal);
         void createAssetLogs();
         void createAllSalesLogs(OrderBookEntry obe);
+        void createSuccessfulSalesLogs(OrderBookEntry sale);
+        void ensureLogFilesEmpty();
 
 
         std::string currentTime,nextCurrentTime;
@@ -52,6 +56,8 @@ class MerkelMain{
         std::vector<DataHolder> dogeUSDTDataHolder;
         std::vector<DataHolder> ethBTCDataHolder;
         std::vector<DataHolder> ethUSDTDataHolder;
+        std::ofstream logBot;
+
 
         OrderBook orderBook{"20200601.csv"};
 
