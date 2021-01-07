@@ -176,9 +176,13 @@ void MerkelMain::procesUserOption(int userOption){
             automatePredictionBot();
             checkEligibleOrder();
             gotoNextTimeFrame();
+            nextCurrentTime = orderBook.getNextTime(currentTime);
             printWallet();
             std::cout << "================ " << std::endl;
             std::cout << "Current time is: " << currentTime << std::endl;
+            if(nextCurrentTime == orderBook.getEarliestTime()){
+                break;
+            }
         }
     }
 }
@@ -329,14 +333,6 @@ void MerkelMain::checkEligibleOrder(){
     dogeUSDTavgPrice = (dogeUSDTDataHolder[dogeUSDTDataHolder.size()-1].avgAsk + dogeUSDTDataHolder[dogeUSDTDataHolder.size()-1].avgBid) /2;
     ethUSDTavgPrice = (ethUSDTDataHolder[ethUSDTDataHolder.size()-1].avgAsk + ethUSDTDataHolder[ethUSDTDataHolder.size()-1].avgBid) /2;
     
-    
-    // for(std::string const& p : orderBook.getKnownProducts()){
-    //     std::vector<OrderBookEntry> askEntries = orderBook.getOrders(OrderBookType::ask, p, currentTime );
-    //     std::vector<OrderBookEntry> bidEntries = orderBook.getOrders(OrderBookType::bid, p, currentTime );
-    //     double lowestAskPrice = OrderBook::getLowPrice(askEntries);
-    //     double highestBidPrice = OrderBook::getHighPrice(bidEntries);
-    //     double spreadVal = ((lowestAskPrice - highestBidPrice)/lowestAskPrice) * 100;
-    // }
 
     // wallet always start with BTC only
     if(wallet.currencies["BTC"] > 0){
