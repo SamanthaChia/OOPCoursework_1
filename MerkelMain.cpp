@@ -3,6 +3,7 @@
 #include "CSVReader.h"
 #include "DataHolder.h"
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <limits>
 #include <algorithm>
@@ -177,7 +178,7 @@ void MerkelMain::procesUserOption(int userOption){
             checkEligibleOrder();
             gotoNextTimeFrame();
             nextCurrentTime = orderBook.getNextTime(currentTime);
-            printWallet();
+            createLogs();
             std::cout << "================ " << std::endl;
             std::cout << "Current time is: " << currentTime << std::endl;
             if(nextCurrentTime == orderBook.getEarliestTime()){
@@ -650,3 +651,13 @@ void MerkelMain::generateOfferWithPredictions(std::string productName, double pr
 
 }
 
+void MerkelMain::createLogs(){
+    std::ofstream logBot;
+
+    //create AssetsLog
+    logBot.open("AssetsLog.csv", std::ofstream::out | std::ofstream::app);
+    logBot << "Time : " << currentTime << std::endl;
+    logBot << "Assets : " << std::endl;
+    logBot << wallet.toString() << std::endl;
+    logBot.close();
+}
