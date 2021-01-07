@@ -654,7 +654,7 @@ void MerkelMain::generateOfferWithPredictions(std::string productName, double pr
 void MerkelMain::createLogs(){
     std::ofstream logBot;
 
-    //create AssetsLog
+    //record assets for each timestamp
     logBot.open("AssetsLog.csv", std::ofstream::out | std::ofstream::app);
     logBot << "Time : " << currentTime << std::endl;
     logBot << "Assets : " << std::endl;
