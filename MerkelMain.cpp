@@ -176,8 +176,8 @@ void MerkelMain::procesUserOption(int userOption){
     else if(userOption == 1){
         std::cout << "Starting MerkelrexBot " << std::endl;
         //run 10 times so current time is 11:58:20.377111
-        automatePredictionBot();
         while(true){        
+            automatePredictionBot();
             createAssetLogs();
             printWallet();
             checkEligibleOrder();
