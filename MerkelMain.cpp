@@ -540,15 +540,6 @@ void MerkelMain::generateOfferWithPredictions(std::string productName, double pr
     }
 }
 
-// void MerkelMain::createAssetLogs(){
-//     //record assets for each timestamp
-//     logBot.open("AssetsLog.csv", std::ofstream::out | std::ofstream::app);
-//     logBot << "Time : " << currentTime << std::endl;
-//     logBot << "Assets : " << std::endl;
-//     logBot << wallet.toString() << std::endl;
-//     logBot.close();
-// }
-
 // void MerkelMain::createAllSalesLogs(OrderBookEntry obe){
 //     // record all bids and asks 
 //     logBot.open("AllSalesLog.csv", std::ofstream::out | std::ofstream::app);
