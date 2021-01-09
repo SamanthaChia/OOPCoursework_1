@@ -152,15 +152,16 @@ void MerkelMain::gotoNextTimeFrame(){
     std::cout << "Continue to next time step." << std::endl;
     for(std::string p : orderBook.getKnownProducts())
     {
-        std::cout << "matching " << p << std::endl;
+        std::cout << "Matching : " << p << std::endl;
         std::vector<OrderBookEntry> sales = orderBook.matchAsksToBids(p, currentTime);
-        std::cout << "Sales: " << sales.size() << std::endl;
+        std::cout << "Sale number : " << sales.size() << std::endl;
         for(OrderBookEntry& sale : sales)
         {   
             std::cout << "Sale amount : " << sale.price << " amount " << sale.amount << std::endl;
             if(sale.username == "simuser")
             {
                 wallet.processSale(sale);
+                std::cout << sale.product << " with the price : " << sale.price << "and amount : " << sale.amount << " was successful! " << std::endl;
                 logs.createSuccessfulSalesLogs(currentTime, sale, orderBook);
             }
         }
