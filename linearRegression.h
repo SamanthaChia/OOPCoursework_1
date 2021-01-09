@@ -1,7 +1,8 @@
 #pragma once
 #include "DataHolder.h"
 #include "OrderBook.h"
-
+#include <vector>
+#include <string>
 
 class linearRegression{
     public:
@@ -14,18 +15,11 @@ class linearRegression{
         void generateDataHolder(std::string currentTime);
 
         /** called to run linear regression predictions using productData
-        * calculations done here.
+         * calculations done here.
         */
-        double generatePredictions(std::vector<DataHolder> productData);
+        double generatePredictions(std::vector<DataHolder> productData);        
 
-       /** called to create data holders for specific products and also 
-        * to obtain ask and bid entries. DataHolder containing
-        * productName, averageAsk, askVolume, averageBid, bidVolume
-        * is created and pushed_back here
-        */
-        void automatePredictionBot();
 
-        // std::string currentTime;
         std::vector<DataHolder> btcUSDTDataHolder;
         std::vector<DataHolder> dogeBTCDataHolder;
         std::vector<DataHolder> dogeUSDTDataHolder;
