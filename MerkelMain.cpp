@@ -161,7 +161,7 @@ void MerkelMain::gotoNextTimeFrame(){
             if(sale.username == "simuser")
             {
                 wallet.processSale(sale);
-                std::cout << sale.product << " with the price : " << sale.price << "and amount : " << sale.amount << " was successful! " << std::endl;
+                std::cout << sale.product << " with the price : " << sale.price << " and amount : " << sale.amount << " was successful! " << std::endl;
                 logs.createSuccessfulSalesLogs(currentTime, sale, orderBook);
             }
         }
