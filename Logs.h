@@ -1,5 +1,3 @@
-#pragma once
-
 #include <fstream>
 #include "OrderBookEntry.h"
 #include "OrderBook.h"

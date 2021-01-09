@@ -224,7 +224,6 @@ void MerkelMain::checkEligibleOrder(){
 
     // wallet always start with BTC only
     if(wallet.currencies["BTC"] > 0){
-
         //btcUSDT
         if (btcUSDTPredictedVal < btcUSDTavgPrice)
         {
@@ -266,7 +265,6 @@ void MerkelMain::checkEligibleOrder(){
     }
 
     if(wallet.currencies["USDT"] > 0){
-
         //btcUSDT
         if (btcUSDTPredictedVal > btcUSDTavgPrice)
         {
@@ -308,7 +306,6 @@ void MerkelMain::checkEligibleOrder(){
     }
 
     if(wallet.currencies["ETH"] > 0){
-
         //ethUSDT
         if (ethUSDTPredictedVal < ethUSDTavgPrice)
         {
@@ -338,7 +335,6 @@ void MerkelMain::checkEligibleOrder(){
     }
 
     if(wallet.currencies["DOGE"] > 0){
-
         //dogeUSDT
         if (dogeUSDTPredictedVal < dogeUSDTavgPrice)
         {
