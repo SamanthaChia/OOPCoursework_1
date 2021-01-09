@@ -40,11 +40,9 @@ class MerkelMain{
         // void createAssetLogs();
         // void createAllSalesLogs(OrderBookEntry obe);
         // void createSuccessfulSalesLogs(OrderBookEntry sale);
-        // void ensureLogFilesEmpty();
 
 
         std::string currentTime,nextCurrentTime;
-        // std::ofstream logBot;
 
 
         OrderBook orderBook{"20200601.csv"};

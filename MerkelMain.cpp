@@ -174,10 +174,9 @@ void MerkelMain::procesUserOption(int userOption){
     }
     else if(userOption == 1){
         std::cout << "Starting MerkelrexBot " << std::endl;
-        //run 10 times so current time is 11:58:20.377111
         while(true){        
             automatePredictionBot();
-            // createAssetLogs();
+            logs.createAssetLogs(currentTime, wallet.toString());
             checkEligibleOrder();
             printWallet();
             gotoNextTimeFrame();
@@ -540,17 +539,6 @@ void MerkelMain::generateOfferWithPredictions(std::string productName, double pr
         std::cout << "No order to be made." << std::endl;
     }
 }
-
-// void MerkelMain::ensureLogFilesEmpty(){
-//     logBot.open("AssetsLog.csv", std::ofstream::out | std::ofstream::trunc);
-//     logBot.close();
-
-//     logBot.open("AllSalesLog.csv", std::ofstream::out | std::ofstream::trunc);
-//     logBot.close();
-
-//     logBot.open("SuccessfulSalesLog.csv", std::ofstream::out | std::ofstream::trunc);
-//     logBot.close();
-// }
 
 // void MerkelMain::createAssetLogs(){
 //     //record assets for each timestamp
