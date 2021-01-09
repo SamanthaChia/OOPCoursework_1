@@ -149,6 +149,7 @@ void MerkelMain::printWallet(){
 }
 
 void MerkelMain::gotoNextTimeFrame(){
+    double costAfterMatching;
     std::cout << "Continue to next time step." << std::endl;
     for(std::string p : orderBook.getKnownProducts())
     {
@@ -161,7 +162,8 @@ void MerkelMain::gotoNextTimeFrame(){
             if(sale.username == "simuser")
             {
                 wallet.processSale(sale);
-                std::cout << sale.product << " with the price : " << sale.price << " and amount : " << sale.amount << " was successful! " << std::endl;
+                costAfterMatching = sale.price * sale.amount;
+                std::cout << sale.product << " with the price : " << sale.price << ", amount : " << sale.amount << " cost : " << costAfterMatching << " was successful! " << std::endl;
                 logs.createSuccessfulSalesLogs(currentTime, sale, orderBook);
             }
         }
