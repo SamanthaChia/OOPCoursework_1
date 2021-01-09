@@ -33,7 +33,7 @@ class MerkelMain{
         /** call to run generateDataHolder for 10 times and generatePredictions 
          * for specified product
          */
-        void automatePredictionBot();
+        void automateGenerateDataHolder();
         void checkEligibleOrder();
         void generateBidWithPredictions(std::string productName, double predictedVal);
         void generateOfferWithPredictions(std::string productName, double predictedVal);

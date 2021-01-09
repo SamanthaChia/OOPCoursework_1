@@ -175,7 +175,7 @@ void MerkelMain::procesUserOption(int userOption){
     else if(userOption == 1){
         std::cout << "Starting MerkelrexBot " << std::endl;
         while(true){        
-            automatePredictionBot();
+            automateGenerateDataHolder();
             logs.createAssetLogs(currentTime, wallet.toString());
             checkEligibleOrder();
             printWallet();
@@ -190,7 +190,7 @@ void MerkelMain::procesUserOption(int userOption){
     }
 }
 
-void MerkelMain::automatePredictionBot(){
+void MerkelMain::automateGenerateDataHolder(){
     //run for 10 times to obtain DataHolders.
     for(int i =0; i<10;){
         linearRegressionPrediction.generateDataHolder(currentTime, orderBook);

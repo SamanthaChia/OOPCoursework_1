@@ -58,7 +58,6 @@ void LinearRegression::generateDataHolder(std::string currentTime, OrderBook ord
     }
 }
 
-//used to be void changed to double to return predictedValue
 double LinearRegression::generatePredictions(std::vector<DataHolder> productData){
     std::vector<double> x,y;
     std::vector<PredictB0B1> errorVal;
@@ -73,9 +72,7 @@ double LinearRegression::generatePredictions(std::vector<DataHolder> productData
         // x = ratio between askVol and bidVol
         // y = avg growth/loss ratio
         x.push_back(askBidRatio);
-        // std::cout << "askBidRatio : " << askBidRatio << std::endl;
         y.push_back(avgGrowthRatio);
-        // std::cout << "avgGrowthRatio : " << avgGrowthRatio << std::endl;
         
     }
 
@@ -100,21 +97,12 @@ double LinearRegression::generatePredictions(std::vector<DataHolder> productData
         return abs(lhs.error) < abs(rhs.error);
     });
 
-    // std::cout << "After sorting = b0: " << errorVal[0].b0 << " b1 : " << errorVal[0].b1 << " error : " << errorVal[0].error << std::endl;
-    
-    
-    // std::cout << "x val : " << x[x.size()-1] <<std::endl;
     currentPrice = (productData[productData.size()-1].avgAsk + productData[productData.size()-1].avgBid)/2;
-    // std::cout << "currentPrice Value : " << currentPrice << std::endl;
     
     // x[x.size()-1] because latest x value,
     // + currentPrice again because it will  only be % of the currentPrice
     // predictedVal = newB0 + newB1 * x[x.size()-1] * currentPrice + currentPrice 
     predictedValue= (errorVal[0].b0+ errorVal[0].b1 * x[x.size()-1] ) * currentPrice + currentPrice ;
-
-    
-    // std::cout << "Predicted Value : " << predictedValue << std::endl;
-    // std::cout << " " <<std::endl;
 
     return predictedValue;
 }
