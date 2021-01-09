@@ -2,6 +2,7 @@
 #include "OrderBookEntry.h"
 #include "CSVReader.h"
 #include "DataHolder.h"
+#include "linearRegression.h"
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -191,63 +192,63 @@ void MerkelMain::procesUserOption(int userOption){
     }
 }
 
-void MerkelMain::generateDataHolder(){
-    std::vector<DataHolder> dataHolderBook;
-    double askVol, bidVol;
-    for(std::string const& p : orderBook.getKnownProducts()){
-        askVol = 0;
-        bidVol = 0;
-        std::vector<OrderBookEntry> askEntries = orderBook.getOrders(OrderBookType::ask, p, currentTime );
-        std::vector<OrderBookEntry> bidEntries = orderBook.getOrders(OrderBookType::bid, p, currentTime );
+// void MerkelMain::generateDataHolder(){
+//     std::vector<DataHolder> dataHolderBook;
+//     double askVol, bidVol;
+//     for(std::string const& p : orderBook.getKnownProducts()){
+//         askVol = 0;
+//         bidVol = 0;
+//         std::vector<OrderBookEntry> askEntries = orderBook.getOrders(OrderBookType::ask, p, currentTime );
+//         std::vector<OrderBookEntry> bidEntries = orderBook.getOrders(OrderBookType::bid, p, currentTime );
 
-        for(OrderBookEntry askEntry : askEntries){
-            askVol += askEntry.amount;
-        }
-        double avgAsk = orderBook.getTotalPrice(askEntries) /askEntries.size();
+//         for(OrderBookEntry askEntry : askEntries){
+//             askVol += askEntry.amount;
+//         }
+//         double avgAsk = orderBook.getTotalPrice(askEntries) /askEntries.size();
         
-        for(OrderBookEntry bidEntry : bidEntries){
-            bidVol += bidEntry.amount;
-        }
+//         for(OrderBookEntry bidEntry : bidEntries){
+//             bidVol += bidEntry.amount;
+//         }
 
-        double avgBid = orderBook.getTotalPrice(bidEntries)/bidEntries.size();
+//         double avgBid = orderBook.getTotalPrice(bidEntries)/bidEntries.size();
 
-        DataHolder dh {
-            p,
-            avgAsk,
-            askVol,
-            avgBid,
-            bidVol
-        };
+//         DataHolder dh {
+//             p,
+//             avgAsk,
+//             askVol,
+//             avgBid,
+//             bidVol
+//         };
 
-		dataHolderBook.push_back(dh);
+// 		dataHolderBook.push_back(dh);
 
-        if(p == "BTC/USDT"){
-            btcUSDTDataHolder.push_back(dh);
-        }
+//         if(p == "BTC/USDT"){
+//             btcUSDTDataHolder.push_back(dh);
+//         }
 
-        if(p == "DOGE/BTC"){
-            dogeBTCDataHolder.push_back(dh);    
-        }
+//         if(p == "DOGE/BTC"){
+//             dogeBTCDataHolder.push_back(dh);    
+//         }
 
-        if(p == "DOGE/USDT"){
-            dogeUSDTDataHolder.push_back(dh);     
-        }
+//         if(p == "DOGE/USDT"){
+//             dogeUSDTDataHolder.push_back(dh);     
+//         }
 
-        if(p == "ETH/BTC"){
-            ethBTCDataHolder.push_back(dh);
-        }
+//         if(p == "ETH/BTC"){
+//             ethBTCDataHolder.push_back(dh);
+//         }
 
-        if(p == "ETH/USDT"){
-            ethUSDTDataHolder.push_back(dh);
-        }
+//         if(p == "ETH/USDT"){
+//             ethUSDTDataHolder.push_back(dh);
+//         }
 
-    }
-}
+//     }
+// }
 
 void MerkelMain::automatePredictionBot(){
     //after 10 times
     for(int i =0; i<10;){
-        generateDataHolder();
+        linearRegressionPrediction.generateDataHolder(currentTime);
         currentTime = orderBook.getNextTime(currentTime);
         i++;
     }
@@ -324,7 +325,12 @@ void MerkelMain::checkEligibleOrder(){
     double btcUSDTPredictedVal, dogeBTCPredictedVal, ethBTCPredictedVal, dogeUSDTPredictedVal, ethUSDTPredictedVal;
     double btcUSDTavgPrice, dogeBTCavgPrice, ethBTCavgPrice, dogeUSDTavgPrice, ethUSDTavgPrice;
 
-    
+    std::vector<DataHolder> btcUSDTDataHolder = linearRegressionPrediction.btcUSDTDataHolder;
+    std::vector<DataHolder> dogeBTCDataHolder = linearRegressionPrediction.dogeBTCDataHolder;
+    std::vector<DataHolder> ethBTCDataHolder = linearRegressionPrediction.ethBTCDataHolder;
+    std::vector<DataHolder> dogeUSDTDataHolder = linearRegressionPrediction.dogeUSDTDataHolder;
+    std::vector<DataHolder> ethUSDTDataHolder = linearRegressionPrediction.ethUSDTDataHolder;  
+
     btcUSDTPredictedVal = generatePredictions(btcUSDTDataHolder);
     dogeBTCPredictedVal = generatePredictions(dogeBTCDataHolder);
     ethBTCPredictedVal = generatePredictions(ethBTCDataHolder);

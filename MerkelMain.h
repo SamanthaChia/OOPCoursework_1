@@ -7,6 +7,7 @@
 #include "Wallet.h"
 #include "PredictB0B1.h"
 #include "DataHolder.h"
+#include "linearRegression.h"
 
 
 class MerkelMain{
@@ -36,7 +37,7 @@ class MerkelMain{
         * productName, averageAsk, askVolume, averageBid, bidVolume
         * is created and pushed_back here
         */
-        void generateDataHolder();
+        // void generateDataHolder();
         /** call to run generateDataHolder for 10 times and generatePredictions 
          * for specified product
          */
@@ -51,11 +52,11 @@ class MerkelMain{
 
 
         std::string currentTime,nextCurrentTime;
-        std::vector<DataHolder> btcUSDTDataHolder;
-        std::vector<DataHolder> dogeBTCDataHolder;
-        std::vector<DataHolder> dogeUSDTDataHolder;
-        std::vector<DataHolder> ethBTCDataHolder;
-        std::vector<DataHolder> ethUSDTDataHolder;
+        // std::vector<DataHolder> btcUSDTDataHolder;
+        // std::vector<DataHolder> dogeBTCDataHolder;
+        // std::vector<DataHolder> dogeUSDTDataHolder;
+        // std::vector<DataHolder> ethBTCDataHolder;
+        // std::vector<DataHolder> ethUSDTDataHolder;
         std::ofstream logBot;
 
 
@@ -63,4 +64,5 @@ class MerkelMain{
 
         Wallet wallet;
 
+        linearRegression linearRegressionPrediction;
 };
