@@ -191,7 +191,7 @@ void MerkelMain::procesUserOption(int userOption){
 }
 
 void MerkelMain::automatePredictionBot(){
-    //after 10 times
+    //run for 10 times to obtain DataHolders.
     for(int i =0; i<10;){
         linearRegressionPrediction.generateDataHolder(currentTime, orderBook);
         currentTime = orderBook.getNextTime(currentTime);

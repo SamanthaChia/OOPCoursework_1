@@ -9,7 +9,6 @@ LinearRegression::LinearRegression(){
 }
 
 void LinearRegression::generateDataHolder(std::string currentTime, OrderBook orderBook){
-    std::vector<DataHolder> dataHolderBook;
     double askVol, bidVol;
     for(std::string const& p : orderBook.getKnownProducts()){
         std::vector<OrderBookEntry> askEntries = orderBook.getOrders(OrderBookType::ask, p, currentTime );
@@ -35,8 +34,6 @@ void LinearRegression::generateDataHolder(std::string currentTime, OrderBook ord
             avgBid,
             bidVol
         };
-
-		dataHolderBook.push_back(dh);
 
         if(p == "BTC/USDT"){
             btcUSDTDataHolder.push_back(dh);
