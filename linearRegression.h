@@ -7,9 +7,10 @@ class linearRegression{
     public:
         linearRegression();
 
-        /** call to run generateDataHolder for 10 times and generatePredictions 
-         * for specified product
-         */
+        /** called to create data holders for specific products.
+         * DataHolder containing, productName, averageAsk, askVolume, averageBid, bidVolume
+        * is created here for the current TimeStamp.
+        */
         void generateDataHolder(std::string currentTime);
 
         /** called to run linear regression predictions using productData
