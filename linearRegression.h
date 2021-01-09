@@ -12,7 +12,7 @@ class LinearRegression{
          * DataHolder containing, productName, averageAsk, askVolume, averageBid, bidVolume
         * is created here for the current TimeStamp.
         */
-        void generateDataHolder(std::string currentTime);
+        void generateDataHolder(std::string currentTime, OrderBook orderBook);
 
         /** called to run linear regression predictions using productData
          * calculations done here.
@@ -26,5 +26,4 @@ class LinearRegression{
         std::vector<DataHolder> ethBTCDataHolder;
         std::vector<DataHolder> ethUSDTDataHolder;
 
-        OrderBook orderBook{"20200601.csv"};
 };

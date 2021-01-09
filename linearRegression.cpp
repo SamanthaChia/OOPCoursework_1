@@ -1,5 +1,6 @@
 #include "LinearRegression.h"
 #include "OrderBookEntry.h"
+#include "OrderBook.h"
 #include "PredictB0B1.h"
 #include <algorithm>
 
@@ -7,7 +8,7 @@ LinearRegression::LinearRegression(){
 
 }
 
-void LinearRegression::generateDataHolder(std::string currentTime){
+void LinearRegression::generateDataHolder(std::string currentTime, OrderBook orderBook){
     std::vector<DataHolder> dataHolderBook;
     double askVol, bidVol;
     for(std::string const& p : orderBook.getKnownProducts()){

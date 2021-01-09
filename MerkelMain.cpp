@@ -161,7 +161,7 @@ void MerkelMain::gotoNextTimeFrame(){
             if(sale.username == "simuser")
             {
                 wallet.processSale(sale);
-                // createSuccessfulSalesLogs(sale);
+                logs.createSuccessfulSalesLogs(currentTime, sale, orderBook);
             }
         }
     }
@@ -193,7 +193,7 @@ void MerkelMain::procesUserOption(int userOption){
 void MerkelMain::automatePredictionBot(){
     //after 10 times
     for(int i =0; i<10;){
-        linearRegressionPrediction.generateDataHolder(currentTime);
+        linearRegressionPrediction.generateDataHolder(currentTime, orderBook);
         currentTime = orderBook.getNextTime(currentTime);
         i++;
     }
@@ -539,24 +539,3 @@ void MerkelMain::generateOfferWithPredictions(std::string productName, double pr
         std::cout << "No order to be made." << std::endl;
     }
 }
-
-// void MerkelMain::createSuccessfulSalesLogs(OrderBookEntry sale){
-//     std::vector<OrderBookEntry> askEntries = orderBook.getOrders(OrderBookType::ask, sale.product, currentTime );
-//     std::vector<OrderBookEntry> bidEntries = orderBook.getOrders(OrderBookType::bid, sale.product, currentTime );
-//     double avgAsk = orderBook.getTotalPrice(askEntries) /askEntries.size();
-//     double avgBid = orderBook.getTotalPrice(bidEntries)/bidEntries.size();
-  
-//     // record ONLY successful bids and asks 
-//     logBot.open("SuccessfulSalesLog.csv", std::ofstream::out | std::ofstream::app);
-//     logBot << "Time : " << currentTime << std::endl;
-//     logBot << "Product Type : " << sale.orderBookTypeToString(sale.orderType) << std::endl;
-//     logBot << "Product Name : " << sale.product << std::endl;
-//     logBot << "Product Price : " << sale.price << std::endl;
-//     logBot << "Product Amount : " << sale.amount << std::endl; 
-//     logBot << "Average Ask : " << avgAsk << std::endl;
-//     logBot << "Average Bid : " << avgBid << std::endl;
-//     logBot << " " << std::endl;
-//     logBot.close();
-
-// }
-
