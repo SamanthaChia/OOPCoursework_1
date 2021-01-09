@@ -7,6 +7,8 @@
 #include "Wallet.h"
 #include "PredictB0B1.h"
 #include "DataHolder.h"
+#include "Logs.h"
+#include "LinearRegression.h"
 
 
 class MerkelMain{
@@ -27,16 +29,7 @@ class MerkelMain{
         void printWallet();
         void gotoNextTimeFrame();
         void procesUserOption(int userOption);
-        /** called to run linear regression predictions using productData
-         * calculations done here.
-        */
-        double generatePredictions(std::vector<DataHolder> productData);
-       /** called to create data holders for specific products and also 
-        * to obtain ask and bid entries. DataHolder containing
-        * productName, averageAsk, askVolume, averageBid, bidVolume
-        * is created and pushed_back here
-        */
-        void generateDataHolder();
+
         /** call to run generateDataHolder for 10 times and generatePredictions 
          * for specified product
          */
@@ -44,23 +37,13 @@ class MerkelMain{
         void checkEligibleOrder();
         void generateBidWithPredictions(std::string productName, double predictedVal);
         void generateOfferWithPredictions(std::string productName, double predictedVal);
-        void createAssetLogs();
-        void createAllSalesLogs(OrderBookEntry obe);
-        void createSuccessfulSalesLogs(OrderBookEntry sale);
-        void ensureLogFilesEmpty();
 
 
         std::string currentTime,nextCurrentTime;
-        std::vector<DataHolder> btcUSDTDataHolder;
-        std::vector<DataHolder> dogeBTCDataHolder;
-        std::vector<DataHolder> dogeUSDTDataHolder;
-        std::vector<DataHolder> ethBTCDataHolder;
-        std::vector<DataHolder> ethUSDTDataHolder;
-        std::ofstream logBot;
 
 
         OrderBook orderBook{"20200601.csv"};
-
         Wallet wallet;
-
+        LinearRegression linearRegressionPrediction;
+        Logs logs;
 };
