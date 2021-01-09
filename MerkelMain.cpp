@@ -374,25 +374,7 @@ void MerkelMain::generateBidWithPredictions(std::string productName, double pred
     double predictions, lowerThanPrediction, lowestPrice, bidAmount, walletAmount;
     std::vector<OrderBookEntry> entries;
     
-    if(productName == "BTC/USDT"){
-        entries = orderBook.getOrders(OrderBookType::ask, "BTC/USDT", currentTime );
-    }
-
-    if(productName == "DOGE/BTC"){
-        entries = orderBook.getOrders(OrderBookType::ask, "DOGE/BTC", currentTime );
-    }
-
-    if(productName == "DOGE/USDT"){
-        entries = orderBook.getOrders(OrderBookType::ask, "DOGE/USDT", currentTime );
-    }
-
-    if(productName == "ETH/BTC"){
-        entries = orderBook.getOrders(OrderBookType::ask, "ETH/BTC", currentTime );
-    }
-
-    if(productName == "ETH/USDT"){
-        entries = orderBook.getOrders(OrderBookType::ask, "ETH/USDT", currentTime );
-    }
+    entries = orderBook.getOrders(OrderBookType::ask, productName, currentTime );
 
     for(OrderBookEntry entry : entries){
         //if entry Price is lower than prediction price, set it as that it is the lower than prediction
@@ -457,32 +439,8 @@ void MerkelMain::generateOfferWithPredictions(std::string productName, double pr
     double currentPrice, askingAmount = 0;
     std::vector<OrderBookEntry> entries;
 
-    if(productName == "BTC/USDT"){
-        entries = orderBook.getOrders(OrderBookType::bid, "BTC/USDT", currentTime );
-        std::sort(entries.begin(), entries.end(), OrderBookEntry::compareByPriceDesc);
-
-    }
-
-    if(productName == "DOGE/BTC"){
-        entries = orderBook.getOrders(OrderBookType::bid, "DOGE/BTC", currentTime );
-        std::sort(entries.begin(), entries.end(), OrderBookEntry::compareByPriceDesc);
-
-    }
-
-    if(productName == "DOGE/USDT"){
-        entries = orderBook.getOrders(OrderBookType::bid, "DOGE/USDT", currentTime );
-        std::sort(entries.begin(), entries.end(), OrderBookEntry::compareByPriceDesc);
-    }
-
-    if(productName == "ETH/BTC"){
-        entries = orderBook.getOrders(OrderBookType::bid, "ETH/BTC", currentTime );
-        std::sort(entries.begin(), entries.end(), OrderBookEntry::compareByPriceDesc);
-    }
-
-    if(productName == "ETH/USDT"){
-        entries = orderBook.getOrders(OrderBookType::bid, "ETH/USDT", currentTime );
-        std::sort(entries.begin(), entries.end(), OrderBookEntry::compareByPriceDesc);
-    }
+    entries = orderBook.getOrders(OrderBookType::bid, productName, currentTime );
+    std::sort(entries.begin(), entries.end(), OrderBookEntry::compareByPriceDesc);
 
     for(OrderBookEntry entry : entries){
         //if entry Price is lower than prediction price, means value of product will go down.
