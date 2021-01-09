@@ -1,13 +1,13 @@
-#include "linearRegression.h"
+#include "LinearRegression.h"
 #include "OrderBookEntry.h"
 #include "PredictB0B1.h"
 #include <algorithm>
 
-linearRegression::linearRegression(){
+LinearRegression::LinearRegression(){
 
 }
 
-void linearRegression::generateDataHolder(std::string currentTime){
+void LinearRegression::generateDataHolder(std::string currentTime){
     std::vector<DataHolder> dataHolderBook;
     double askVol, bidVol;
     for(std::string const& p : orderBook.getKnownProducts()){
@@ -61,7 +61,7 @@ void linearRegression::generateDataHolder(std::string currentTime){
 }
 
 //used to be void changed to double to return predictedValue
-double linearRegression::generatePredictions(std::vector<DataHolder> productData){
+double LinearRegression::generatePredictions(std::vector<DataHolder> productData){
     std::vector<double> x,y;
     std::vector<PredictB0B1> errorVal;
     double predictedValue, error, b1, b0, currentPrice, askBidRatio, avgGrowthRatio;

@@ -2,7 +2,7 @@
 #include "OrderBookEntry.h"
 #include "CSVReader.h"
 #include "DataHolder.h"
-#include "linearRegression.h"
+#include "LinearRegression.h"
 #include <iostream>
 #include <fstream>
 #include <vector>

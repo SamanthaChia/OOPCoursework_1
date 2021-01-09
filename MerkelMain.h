@@ -7,7 +7,7 @@
 #include "Wallet.h"
 #include "PredictB0B1.h"
 #include "DataHolder.h"
-#include "linearRegression.h"
+#include "LinearRegression.h"
 
 
 class MerkelMain{
@@ -50,5 +50,5 @@ class MerkelMain{
 
         Wallet wallet;
 
-        linearRegression linearRegressionPrediction;
+        LinearRegression linearRegressionPrediction;
 };

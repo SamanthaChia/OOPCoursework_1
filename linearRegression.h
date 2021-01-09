@@ -4,9 +4,9 @@
 #include <vector>
 #include <string>
 
-class linearRegression{
+class LinearRegression{
     public:
-        linearRegression();
+        LinearRegression();
 
         /** called to create data holders for specific products.
          * DataHolder containing, productName, averageAsk, askVolume, averageBid, bidVolume
