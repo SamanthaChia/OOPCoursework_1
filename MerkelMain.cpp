@@ -2,7 +2,6 @@
 #include "OrderBookEntry.h"
 #include "CSVReader.h"
 #include "DataHolder.h"
-#include "LinearRegression.h"
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -17,7 +16,7 @@ void MerkelMain::init(){
     
     int input;
     currentTime = orderBook.getEarliestTime();
-    ensureLogFilesEmpty();
+    logs.ensureLogFilesEmpty();
     wallet.insertCurrency("BTC", 10);
     while(true){
         printMenu();
@@ -162,7 +161,7 @@ void MerkelMain::gotoNextTimeFrame(){
             if(sale.username == "simuser")
             {
                 wallet.processSale(sale);
-                createSuccessfulSalesLogs(sale);
+                // createSuccessfulSalesLogs(sale);
             }
         }
     }
@@ -178,7 +177,7 @@ void MerkelMain::procesUserOption(int userOption){
         //run 10 times so current time is 11:58:20.377111
         while(true){        
             automatePredictionBot();
-            createAssetLogs();
+            // createAssetLogs();
             checkEligibleOrder();
             printWallet();
             gotoNextTimeFrame();
@@ -422,7 +421,7 @@ void MerkelMain::generateBidWithPredictions(std::string productName, double pred
     if(wallet.canFulfillOrder(obe))
     {
         orderBook.insertOrder(obe);
-        createAllSalesLogs(obe);
+        // createAllSalesLogs(obe);
         std::cout <<"Bid has been made " <<std::endl;
 
     } else{
@@ -442,7 +441,7 @@ void MerkelMain::generateBidWithPredictions(std::string productName, double pred
             };
             if(wallet.canFulfillOrder(obe)){
                 orderBook.insertOrder(obe);
-                createAllSalesLogs(obe);
+                // createAllSalesLogs(obe);
                 std::cout <<"Bid has been made " <<std::endl;
 
             } else{
@@ -509,7 +508,7 @@ void MerkelMain::generateOfferWithPredictions(std::string productName, double pr
         if(wallet.canFulfillOrder(obe))
         {
             orderBook.insertOrder(obe);
-            createAllSalesLogs(obe);
+            // createAllSalesLogs(obe);
             std::cout <<"Ask has been made " <<std::endl;
         }else{
             std::vector<std::string> currs = CSVReader::tokenise(productName, '/');
@@ -529,7 +528,7 @@ void MerkelMain::generateOfferWithPredictions(std::string productName, double pr
                 
                 if(wallet.canFulfillOrder(obe)){
                     orderBook.insertOrder(obe);
-                    createAllSalesLogs(obe);
+                    // createAllSalesLogs(obe);
                     std::cout <<"Ask has been made " <<std::endl;
 
                 } else{
@@ -542,55 +541,55 @@ void MerkelMain::generateOfferWithPredictions(std::string productName, double pr
     }
 }
 
-void MerkelMain::ensureLogFilesEmpty(){
-    logBot.open("AssetsLog.csv", std::ofstream::out | std::ofstream::trunc);
-    logBot.close();
+// void MerkelMain::ensureLogFilesEmpty(){
+//     logBot.open("AssetsLog.csv", std::ofstream::out | std::ofstream::trunc);
+//     logBot.close();
 
-    logBot.open("AllSalesLog.csv", std::ofstream::out | std::ofstream::trunc);
-    logBot.close();
+//     logBot.open("AllSalesLog.csv", std::ofstream::out | std::ofstream::trunc);
+//     logBot.close();
 
-    logBot.open("SuccessfulSalesLog.csv", std::ofstream::out | std::ofstream::trunc);
-    logBot.close();
-}
+//     logBot.open("SuccessfulSalesLog.csv", std::ofstream::out | std::ofstream::trunc);
+//     logBot.close();
+// }
 
-void MerkelMain::createAssetLogs(){
-    //record assets for each timestamp
-    logBot.open("AssetsLog.csv", std::ofstream::out | std::ofstream::app);
-    logBot << "Time : " << currentTime << std::endl;
-    logBot << "Assets : " << std::endl;
-    logBot << wallet.toString() << std::endl;
-    logBot.close();
-}
+// void MerkelMain::createAssetLogs(){
+//     //record assets for each timestamp
+//     logBot.open("AssetsLog.csv", std::ofstream::out | std::ofstream::app);
+//     logBot << "Time : " << currentTime << std::endl;
+//     logBot << "Assets : " << std::endl;
+//     logBot << wallet.toString() << std::endl;
+//     logBot.close();
+// }
 
-void MerkelMain::createAllSalesLogs(OrderBookEntry obe){
-    // record all bids and asks 
-    logBot.open("AllSalesLog.csv", std::ofstream::out | std::ofstream::app);
-    logBot << "Time : " << currentTime << std::endl;
-    logBot << "Product Type : " << obe.orderBookTypeToString(obe.orderType) << std::endl;
-    logBot << "Product Name : " << obe.product << std::endl;
-    logBot << "Product Price : " << obe.price << std::endl;
-    logBot << "Product Amount : " << obe.amount << std::endl; 
-    logBot << " " << std::endl;
-    logBot.close();
-}
+// void MerkelMain::createAllSalesLogs(OrderBookEntry obe){
+//     // record all bids and asks 
+//     logBot.open("AllSalesLog.csv", std::ofstream::out | std::ofstream::app);
+//     logBot << "Time : " << currentTime << std::endl;
+//     logBot << "Product Type : " << obe.orderBookTypeToString(obe.orderType) << std::endl;
+//     logBot << "Product Name : " << obe.product << std::endl;
+//     logBot << "Product Price : " << obe.price << std::endl;
+//     logBot << "Product Amount : " << obe.amount << std::endl; 
+//     logBot << " " << std::endl;
+//     logBot.close();
+// }
 
-void MerkelMain::createSuccessfulSalesLogs(OrderBookEntry sale){
-    std::vector<OrderBookEntry> askEntries = orderBook.getOrders(OrderBookType::ask, sale.product, currentTime );
-    std::vector<OrderBookEntry> bidEntries = orderBook.getOrders(OrderBookType::bid, sale.product, currentTime );
-    double avgAsk = orderBook.getTotalPrice(askEntries) /askEntries.size();
-    double avgBid = orderBook.getTotalPrice(bidEntries)/bidEntries.size();
+// void MerkelMain::createSuccessfulSalesLogs(OrderBookEntry sale){
+//     std::vector<OrderBookEntry> askEntries = orderBook.getOrders(OrderBookType::ask, sale.product, currentTime );
+//     std::vector<OrderBookEntry> bidEntries = orderBook.getOrders(OrderBookType::bid, sale.product, currentTime );
+//     double avgAsk = orderBook.getTotalPrice(askEntries) /askEntries.size();
+//     double avgBid = orderBook.getTotalPrice(bidEntries)/bidEntries.size();
   
-    // record ONLY successful bids and asks 
-    logBot.open("SuccessfulSalesLog.csv", std::ofstream::out | std::ofstream::app);
-    logBot << "Time : " << currentTime << std::endl;
-    logBot << "Product Type : " << sale.orderBookTypeToString(sale.orderType) << std::endl;
-    logBot << "Product Name : " << sale.product << std::endl;
-    logBot << "Product Price : " << sale.price << std::endl;
-    logBot << "Product Amount : " << sale.amount << std::endl; 
-    logBot << "Average Ask : " << avgAsk << std::endl;
-    logBot << "Average Bid : " << avgBid << std::endl;
-    logBot << " " << std::endl;
-    logBot.close();
+//     // record ONLY successful bids and asks 
+//     logBot.open("SuccessfulSalesLog.csv", std::ofstream::out | std::ofstream::app);
+//     logBot << "Time : " << currentTime << std::endl;
+//     logBot << "Product Type : " << sale.orderBookTypeToString(sale.orderType) << std::endl;
+//     logBot << "Product Name : " << sale.product << std::endl;
+//     logBot << "Product Price : " << sale.price << std::endl;
+//     logBot << "Product Amount : " << sale.amount << std::endl; 
+//     logBot << "Average Ask : " << avgAsk << std::endl;
+//     logBot << "Average Bid : " << avgBid << std::endl;
+//     logBot << " " << std::endl;
+//     logBot.close();
 
-}
+// }
 

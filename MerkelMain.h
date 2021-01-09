@@ -7,6 +7,7 @@
 #include "Wallet.h"
 #include "PredictB0B1.h"
 #include "DataHolder.h"
+#include "Logs.h"
 #include "LinearRegression.h"
 
 
@@ -36,19 +37,18 @@ class MerkelMain{
         void checkEligibleOrder();
         void generateBidWithPredictions(std::string productName, double predictedVal);
         void generateOfferWithPredictions(std::string productName, double predictedVal);
-        void createAssetLogs();
-        void createAllSalesLogs(OrderBookEntry obe);
-        void createSuccessfulSalesLogs(OrderBookEntry sale);
-        void ensureLogFilesEmpty();
+        // void createAssetLogs();
+        // void createAllSalesLogs(OrderBookEntry obe);
+        // void createSuccessfulSalesLogs(OrderBookEntry sale);
+        // void ensureLogFilesEmpty();
 
 
         std::string currentTime,nextCurrentTime;
-        std::ofstream logBot;
+        // std::ofstream logBot;
 
 
         OrderBook orderBook{"20200601.csv"};
-
         Wallet wallet;
-
         LinearRegression linearRegressionPrediction;
+        Logs logs;
 };
