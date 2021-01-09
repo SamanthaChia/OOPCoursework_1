@@ -158,7 +158,6 @@ void MerkelMain::gotoNextTimeFrame(){
         std::cout << "Sale number : " << sales.size() << std::endl;
         for(OrderBookEntry& sale : sales)
         {   
-            std::cout << "Sale amount : " << sale.price << " amount " << sale.amount << std::endl;
             if(sale.username == "simuser")
             {
                 wallet.processSale(sale);
@@ -442,8 +441,6 @@ void MerkelMain::generateOfferWithPredictions(std::string productName, double pr
     std::sort(entries.begin(), entries.end(), OrderBookEntry::compareByPriceDesc);
 
     for(OrderBookEntry entry : entries){
-        //if entry Price is lower than prediction price, means value of product will go down.
-        // example BTC/USDT will go down, USDT Value go up, BTC Value go down.
         if(predictedVal < entry.price) {
             currentPrice = entry.price*0.9999;
             askingAmount = entry.amount;
