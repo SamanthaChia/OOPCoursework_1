@@ -29,11 +29,6 @@ class MerkelMain{
         void gotoNextTimeFrame();
         void procesUserOption(int userOption);
 
-        // /** called to run linear regression predictions using productData
-        //  * calculations done here.
-        // */
-        // double generatePredictions(std::vector<DataHolder> productData);
-
         /** call to run generateDataHolder for 10 times and generatePredictions 
          * for specified product
          */
