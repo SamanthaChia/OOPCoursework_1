@@ -42,7 +42,8 @@ void Logs::createSuccessfulSalesLogs(std::string currentTime, OrderBookEntry sal
     std::vector<OrderBookEntry> bidEntries = orderBook.getOrders(OrderBookType::bid, sale.product, currentTime );
     double avgAsk = orderBook.getTotalPrice(askEntries) /askEntries.size();
     double avgBid = orderBook.getTotalPrice(bidEntries)/bidEntries.size();
-  
+    double cost = sale.price * sale.amount;
+
     // record ONLY successful bids and asks 
     logBot.open("SuccessfulSalesLog.csv", std::ofstream::out | std::ofstream::app);
     logBot << "Time : " << currentTime << std::endl;
@@ -52,6 +53,7 @@ void Logs::createSuccessfulSalesLogs(std::string currentTime, OrderBookEntry sal
     logBot << "Product Amount : " << sale.amount << std::endl; 
     logBot << "Average Ask : " << avgAsk << std::endl;
     logBot << "Average Bid : " << avgBid << std::endl;
+    logBot << "Cost : " << cost << std::endl;
     logBot << " " << std::endl;
     logBot.close();
 
