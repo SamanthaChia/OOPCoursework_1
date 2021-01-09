@@ -12,10 +12,10 @@ void LinearRegression::generateDataHolder(std::string currentTime, OrderBook ord
     std::vector<DataHolder> dataHolderBook;
     double askVol, bidVol;
     for(std::string const& p : orderBook.getKnownProducts()){
-        askVol = 0;
-        bidVol = 0;
         std::vector<OrderBookEntry> askEntries = orderBook.getOrders(OrderBookType::ask, p, currentTime );
         std::vector<OrderBookEntry> bidEntries = orderBook.getOrders(OrderBookType::bid, p, currentTime );
+        askVol = 0;
+        bidVol = 0;
 
         for(OrderBookEntry askEntry : askEntries){
             askVol += askEntry.amount;
