@@ -37,7 +37,6 @@ class MerkelMain{
         void checkEligibleOrder();
         void generateBidWithPredictions(std::string productName, double predictedVal);
         void generateOfferWithPredictions(std::string productName, double predictedVal);
-        // void createAllSalesLogs(OrderBookEntry obe);
         // void createSuccessfulSalesLogs(OrderBookEntry sale);
 
 

@@ -420,7 +420,7 @@ void MerkelMain::generateBidWithPredictions(std::string productName, double pred
     if(wallet.canFulfillOrder(obe))
     {
         orderBook.insertOrder(obe);
-        // createAllSalesLogs(obe);
+        logs.createAllSalesLogs(currentTime, obe);
         std::cout <<"Bid has been made " <<std::endl;
 
     } else{
@@ -440,7 +440,7 @@ void MerkelMain::generateBidWithPredictions(std::string productName, double pred
             };
             if(wallet.canFulfillOrder(obe)){
                 orderBook.insertOrder(obe);
-                // createAllSalesLogs(obe);
+                logs.createAllSalesLogs(currentTime, obe);
                 std::cout <<"Bid has been made " <<std::endl;
 
             } else{
@@ -507,7 +507,7 @@ void MerkelMain::generateOfferWithPredictions(std::string productName, double pr
         if(wallet.canFulfillOrder(obe))
         {
             orderBook.insertOrder(obe);
-            // createAllSalesLogs(obe);
+            logs.createAllSalesLogs(currentTime, obe);
             std::cout <<"Ask has been made " <<std::endl;
         }else{
             std::vector<std::string> currs = CSVReader::tokenise(productName, '/');
@@ -527,7 +527,7 @@ void MerkelMain::generateOfferWithPredictions(std::string productName, double pr
                 
                 if(wallet.canFulfillOrder(obe)){
                     orderBook.insertOrder(obe);
-                    // createAllSalesLogs(obe);
+                    logs.createAllSalesLogs(currentTime, obe);
                     std::cout <<"Ask has been made " <<std::endl;
 
                 } else{
@@ -539,18 +539,6 @@ void MerkelMain::generateOfferWithPredictions(std::string productName, double pr
         std::cout << "No order to be made." << std::endl;
     }
 }
-
-// void MerkelMain::createAllSalesLogs(OrderBookEntry obe){
-//     // record all bids and asks 
-//     logBot.open("AllSalesLog.csv", std::ofstream::out | std::ofstream::app);
-//     logBot << "Time : " << currentTime << std::endl;
-//     logBot << "Product Type : " << obe.orderBookTypeToString(obe.orderType) << std::endl;
-//     logBot << "Product Name : " << obe.product << std::endl;
-//     logBot << "Product Price : " << obe.price << std::endl;
-//     logBot << "Product Amount : " << obe.amount << std::endl; 
-//     logBot << " " << std::endl;
-//     logBot.close();
-// }
 
 // void MerkelMain::createSuccessfulSalesLogs(OrderBookEntry sale){
 //     std::vector<OrderBookEntry> askEntries = orderBook.getOrders(OrderBookType::ask, sale.product, currentTime );
