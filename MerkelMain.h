@@ -41,7 +41,6 @@ class MerkelMain{
 
         std::string currentTime, nextCurrentTime, previousTimeFrame;
 
-
         OrderBook orderBook{"20200601.csv"};
         Wallet wallet;
         LinearRegression linearRegressionPrediction;

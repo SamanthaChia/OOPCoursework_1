@@ -74,7 +74,7 @@ Time : 2020/06/01 12:04:45.780505
 Product Type : ask
 Product Name : ETH/BTC
 Product Price : 0.0248603
-Product Amount : 5.92017
+Product Amount : 5.92034
  
 Time : 2020/06/01 12:04:45.780505
 Product Type : ask
@@ -98,7 +98,7 @@ Time : 2020/06/01 12:05:40.832713
 Product Type : bid
 Product Name : BTC/USDT
 Product Price : 9546.3
-Product Amount : 0.00062017
+Product Amount : 0.000591411
  
 Time : 2020/06/01 12:05:40.832713
 Product Type : bid
@@ -110,7 +110,7 @@ Time : 2020/06/01 12:05:40.832713
 Product Type : bid
 Product Name : BTC/USDT
 Product Price : 9546.3
-Product Amount : 0.00387245
+Product Amount : 0.00502918
  
 Time : 2020/06/01 12:05:40.832713
 Product Type : bid
@@ -206,7 +206,7 @@ Time : 2020/06/01 12:12:06.762353
 Product Type : bid
 Product Name : ETH/USDT
 Product Price : 236.369
-Product Amount : 0.0226535
+Product Amount : 0.0226979
  
 Time : 2020/06/01 12:12:06.762353
 Product Type : bid
@@ -218,13 +218,13 @@ Time : 2020/06/01 12:12:06.762353
 Product Type : bid
 Product Name : ETH/USDT
 Product Price : 236.369
-Product Amount : 0.725651
+Product Amount : 0.726345
  
 Time : 2020/06/01 12:12:06.762353
 Product Type : bid
 Product Name : ETH/USDT
 Product Price : 236.369
-Product Amount : 15.702
+Product Amount : 15.1156
  
 Time : 2020/06/01 12:13:01.816584
 Product Type : bid
@@ -242,5 +242,263 @@ Time : 2020/06/01 12:13:01.816584
 Product Type : bid
 Product Name : ETH/USDT
 Product Price : 237.08
-Product Amount : 10.4
+Product Amount : 0.0231596
+ 
+Time : 2020/06/01 12:13:01.816584
+Product Type : bid
+Product Name : ETH/USDT
+Product Price : 237.08
+Product Amount : 0
+ 
+Time : 2020/06/01 12:13:01.816584
+Product Type : bid
+Product Name : ETH/USDT
+Product Price : 237.08
+Product Amount : 0.736821
+ 
+Time : 2020/06/01 12:13:01.816584
+Product Type : bid
+Product Name : ETH/USDT
+Product Price : 237.08
+Product Amount : 7.03573
+ 
+Time : 2020/06/01 12:13:56.864709
+Product Type : bid
+Product Name : BTC/USDT
+Product Price : 9531.57
+Product Amount : 0.000576052
+ 
+Time : 2020/06/01 12:13:56.864709
+Product Type : bid
+Product Name : BTC/USDT
+Product Price : 9531.57
+Product Amount : 0
+ 
+Time : 2020/06/01 12:13:56.864709
+Product Type : bid
+Product Name : BTC/USDT
+Product Price : 9531.57
+Product Amount : 0.0183271
+ 
+Time : 2020/06/01 12:13:56.864709
+Product Type : bid
+Product Name : BTC/USDT
+Product Price : 9531.57
+Product Amount : 0.175001
+ 
+Time : 2020/06/01 12:14:51.911856
+Product Type : bid
+Product Name : ETH/BTC
+Product Price : 0.0248721
+Product Amount : 23
+ 
+Time : 2020/06/01 12:14:51.911856
+Product Type : bid
+Product Name : BTC/USDT
+Product Price : 9559.31
+Product Amount : 0.00028487
+ 
+Time : 2020/06/01 12:15:46.965450
+Product Type : bid
+Product Name : ETH/BTC
+Product Price : 0.0248411
+Product Amount : 23.487
+ 
+Time : 2020/06/01 12:15:46.965450
+Product Type : bid
+Product Name : BTC/USDT
+Product Price : 9531.65
+Product Amount : 0.1515
+ 
+Time : 2020/06/01 12:15:46.965450
+Product Type : bid
+Product Name : ETH/USDT
+Product Price : 236.147
+Product Amount : 0.0190117
+ 
+Time : 2020/06/01 12:15:46.965450
+Product Type : bid
+Product Name : ETH/USDT
+Product Price : 236.147
+Product Amount : 0
+ 
+Time : 2020/06/01 12:15:46.965450
+Product Type : bid
+Product Name : ETH/USDT
+Product Price : 236.147
+Product Amount : 0.936589
+ 
+Time : 2020/06/01 12:15:46.965450
+Product Type : bid
+Product Name : ETH/USDT
+Product Price : 236.147
+Product Amount : 0.942354
+ 
+Time : 2020/06/01 12:16:42.029251
+Product Type : bid
+Product Name : BTC/USDT
+Product Price : 9534.76
+Product Amount : 0.000470862
+ 
+Time : 2020/06/01 12:16:42.029251
+Product Type : bid
+Product Name : BTC/USDT
+Product Price : 9534.76
+Product Amount : 0
+ 
+Time : 2020/06/01 12:16:42.029251
+Product Type : bid
+Product Name : BTC/USDT
+Product Price : 9534.76
+Product Amount : 0.0231965
+ 
+Time : 2020/06/01 12:17:37.081986
+Product Type : bid
+Product Name : ETH/BTC
+Product Price : 0.0248602
+Product Amount : 32.0502
+ 
+Time : 2020/06/01 12:17:37.081986
+Product Type : bid
+Product Name : BTC/USDT
+Product Price : 9540.29
+Product Amount : 0.000387214
+ 
+Time : 2020/06/01 12:17:37.081986
+Product Type : bid
+Product Name : BTC/USDT
+Product Price : 9540.29
+Product Amount : 0
+ 
+Time : 2020/06/01 12:17:37.081986
+Product Type : bid
+Product Name : BTC/USDT
+Product Price : 9540.29
+Product Amount : 0.0233257
+ 
+Time : 2020/06/01 12:18:32.140635
+Product Type : bid
+Product Name : BTC/USDT
+Product Price : 9570
+Product Amount : 0.000386011
+ 
+Time : 2020/06/01 12:18:32.140635
+Product Type : bid
+Product Name : BTC/USDT
+Product Price : 9570
+Product Amount : 0
+ 
+Time : 2020/06/01 12:18:32.140635
+Product Type : bid
+Product Name : BTC/USDT
+Product Price : 9570
+Product Amount : 0.0232533
+ 
+Time : 2020/06/01 12:18:32.140635
+Product Type : bid
+Product Name : ETH/USDT
+Product Price : 236.745
+Product Amount : 0.0156038
+ 
+Time : 2020/06/01 12:18:32.140635
+Product Type : bid
+Product Name : ETH/USDT
+Product Price : 236.745
+Product Amount : 0
+ 
+Time : 2020/06/01 12:18:32.140635
+Product Type : bid
+Product Name : ETH/USDT
+Product Price : 236.745
+Product Amount : 0.939972
+ 
+Time : 2020/06/01 12:19:27.202295
+Product Type : bid
+Product Name : ETH/BTC
+Product Price : 0.0248869
+Product Amount : 0.163962
+ 
+Time : 2020/06/01 12:19:27.202295
+Product Type : bid
+Product Name : BTC/USDT
+Product Price : 9572
+Product Amount : 0.00398362
+ 
+Time : 2020/06/01 12:19:27.202295
+Product Type : bid
+Product Name : ETH/USDT
+Product Price : 236.7
+Product Amount : 0.0156064
+ 
+Time : 2020/06/01 12:19:27.202295
+Product Type : bid
+Product Name : ETH/USDT
+Product Price : 236.7
+Product Amount : 0
+ 
+Time : 2020/06/01 12:19:27.202295
+Product Type : bid
+Product Name : ETH/USDT
+Product Price : 236.7
+Product Amount : 0.779783
+ 
+Time : 2020/06/01 12:20:22.267226
+Product Type : bid
+Product Name : ETH/BTC
+Product Price : 0.0250093
+Product Amount : 0.05
+ 
+Time : 2020/06/01 12:20:22.267226
+Product Type : bid
+Product Name : BTC/USDT
+Product Price : 9573
+Product Amount : 0.014557
+ 
+Time : 2020/06/01 12:20:22.267226
+Product Type : bid
+Product Name : ETH/USDT
+Product Price : 237.189
+Product Amount : 0.0156304
+ 
+Time : 2020/06/01 12:20:22.267226
+Product Type : bid
+Product Name : ETH/USDT
+Product Price : 237.189
+Product Amount : 0
+ 
+Time : 2020/06/01 12:20:22.267226
+Product Type : bid
+Product Name : ETH/USDT
+Product Price : 237.189
+Product Amount : 0.1938
+ 
+Time : 2020/06/01 12:21:17.335962
+Product Type : bid
+Product Name : ETH/BTC
+Product Price : 0.024905
+Product Amount : 27
+ 
+Time : 2020/06/01 12:21:17.335962
+Product Type : bid
+Product Name : BTC/USDT
+Product Price : 9528.88
+Product Amount : 0.000318689
+ 
+Time : 2020/06/01 12:21:17.335962
+Product Type : bid
+Product Name : BTC/USDT
+Product Price : 9528.88
+Product Amount : 0
+ 
+Time : 2020/06/01 12:21:17.335962
+Product Type : bid
+Product Name : BTC/USDT
+Product Price : 9528.88
+Product Amount : 0.00482399
+ 
+Time : 2020/06/01 12:22:12.398494
+Product Type : bid
+Product Name : ETH/BTC
+Product Price : 0.0248841
+Product Amount : 79.1
  
