@@ -39,7 +39,7 @@ class MerkelMain{
         void generateOfferWithPredictions(std::string productName, double predictedVal);
 
 
-        std::string currentTime,nextCurrentTime;
+        std::string currentTime, nextCurrentTime, previousTimeFrame;
 
 
         OrderBook orderBook{"20200601.csv"};

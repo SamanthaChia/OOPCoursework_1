@@ -181,6 +181,7 @@ void MerkelMain::procesUserOption(int userOption){
             logs.createAssetLogs(currentTime, wallet.toString());
             checkEligibleOrder();
             printWallet();
+            previousTimeFrame = currentTime;
             gotoNextTimeFrame();
             nextCurrentTime = orderBook.getNextTime(currentTime);
             std::cout << "================ " << std::endl;
@@ -193,43 +194,41 @@ void MerkelMain::procesUserOption(int userOption){
 }
 
 void MerkelMain::automateGenerateDataHolder(){
-    // int index = 0;
-    std::string previousTimeFrame;
+    int index = 0;
     //run for 10 times to obtain DataHolders.
     for(int i =0; i<10;){
         linearRegressionPrediction.generateDataHolder(currentTime, orderBook);
-        previousTimeFrame = currentTime;
         currentTime = orderBook.getNextTime(currentTime);
         i++;
     }
 
-    // //before processing, remove previous simuser stuff
-    // for(std::string const& p : orderBook.getKnownProducts()){
-    //     std::vector<OrderBookEntry> askEntries = orderBook.getOrders(OrderBookType::ask, p, previousTimeFrame );
-    //     std::vector<OrderBookEntry> bidEntries = orderBook.getOrders(OrderBookType::bid, p, previousTimeFrame );
-    //     //go through bid first
-    //     for(OrderBookEntry obe : bidEntries){
-    //         if(obe.username == "simuser"){
-    //             bidEntries.erase(bidEntries.begin() + index);
-    //             std::cout << obe.orderBookTypeToString(obe.orderType) << " for " << obe.product << " has been withdrawn from orderBook " << std::endl;
-    //         } else
-    //         {
-    //             index++;
-    //         }
-    //     }
+    //before processing, remove previous simuser stuff
+    for(std::string const& p : orderBook.getKnownProducts()){
+        std::vector<OrderBookEntry> askEntries = orderBook.getOrders(OrderBookType::ask, p, previousTimeFrame );
+        std::vector<OrderBookEntry> bidEntries = orderBook.getOrders(OrderBookType::bid, p, previousTimeFrame );
+        //go through bid first
+        for(OrderBookEntry obe : bidEntries){
+            if(obe.username == "simuser"){
+                bidEntries.erase(bidEntries.begin() + index);
+                std::cout << obe.orderBookTypeToString(obe.orderType) << " for " << obe.product << " has been withdrawn from orderBook " << std::endl;
+            } else
+            {
+                index++;
+            }
+        }
 
-    //     //go through askEntries
-    //     for(OrderBookEntry obe: askEntries){
-    //         if(obe.username == "simuser"){
-    //             askEntries.erase(askEntries.begin() + index);
-    //             std::cout << obe.orderBookTypeToString(obe.orderType) << " for " << obe.product << " has been withdrawn from orderBook " << std::endl;
+        //go through askEntries
+        for(OrderBookEntry obe: askEntries){
+            if(obe.username == "simuser"){
+                askEntries.erase(askEntries.begin() + index);
+                std::cout << obe.orderBookTypeToString(obe.orderType) << " for " << obe.product << " has been withdrawn from orderBook " << std::endl;
 
-    //         }else
-    //         {
-    //             index++;
-    //         }
-    //     }
-    // }
+            }else
+            {
+                index++;
+            }
+        }
+    }
 }
 
 void MerkelMain::checkEligibleOrder(){
