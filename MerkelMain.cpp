@@ -184,7 +184,7 @@ void MerkelMain::automateGenerateDataHolder(){
         i++;
     }
 
-    removeUnmatchedSales();
+    orderBook.removeUnmatchedSales(orderBook ,previousTimeFrame);
 }
 
 void MerkelMain::checkEligibleOrder(){
@@ -494,37 +494,6 @@ void MerkelMain::matchAndProcessSale(OrderBookEntry obe){
             costAfterMatching = sale.price * sale.amount;
             std::cout << sale.product << " with the price : " << sale.price << ", amount : " << sale.amount << " cost : " << costAfterMatching << " was successful! " << std::endl;
             logs.createSuccessfulSalesLogs(currentTime, sale, orderBook);
-        }
-    }
-}
-
-void MerkelMain::removeUnmatchedSales(){
-    int index = 0;
-    //before processing, remove previous simuser stuff
-    for(std::string const& p : orderBook.getKnownProducts()){
-        std::vector<OrderBookEntry> askEntries = orderBook.getOrders(OrderBookType::ask, p, previousTimeFrame );
-        std::vector<OrderBookEntry> bidEntries = orderBook.getOrders(OrderBookType::bid, p, previousTimeFrame );
-        //go through bid first
-        for(OrderBookEntry obe : bidEntries){
-            if(obe.username == "simuser"){
-                bidEntries.erase(bidEntries.begin() + index);
-                std::cout << obe.orderBookTypeToString(obe.orderType) << " for " << obe.product << " has been withdrawn from orderBook " << std::endl;
-            } else
-            {
-                index++;
-            }
-        }
-
-        //go through askEntries
-        for(OrderBookEntry obe: askEntries){
-            if(obe.username == "simuser"){
-                askEntries.erase(askEntries.begin() + index);
-                std::cout << obe.orderBookTypeToString(obe.orderType) << " for " << obe.product << " has been withdrawn from orderBook " << std::endl;
-
-            }else
-            {
-                index++;
-            }
         }
     }
 }

@@ -44,8 +44,6 @@ class MerkelMain{
         /** call this function to matchAskstoBids and also to process the sale */
         void matchAndProcessSale(OrderBookEntry obe);
 
-        /** call this function to remove any unmatched salles from previous time frames*/
-        void removeUnmatchedSales();
 
         std::string currentTime, nextCurrentTime, previousTimeFrame;
 
