@@ -35,10 +35,15 @@ class MerkelMain{
          */
         void automateGenerateDataHolder();
 
+        /** call this function to calculate the spread value for each product
+         * and decide from what is in the wallet, what bid or ask to make.
+         */
         void checkEligibleOrder();
         
+        /** called to generate bids for specific product and with calculated predicted value */
         void generateBidWithPredictions(std::string productName, double predictedVal);
         
+        /** called to generate ask offers for specific product and with calculated predicted value */
         void generateOfferWithPredictions(std::string productName, double predictedVal);
 
         /** call this function to matchAskstoBids and also to process the sale */
