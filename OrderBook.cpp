@@ -161,9 +161,9 @@ std::vector<OrderBookEntry> OrderBook::matchAsksToBids(std::string product, std:
 }
 
 void OrderBook::removeUnmatchedSales(OrderBook orderBook, std::string previousTimeFrame){
-    int index = 0;
     //before processing, remove previous simuser stuff
     for(std::string const& p : orderBook.getKnownProducts()){
+        int index = 0;
         std::vector<OrderBookEntry> askEntries = orderBook.getOrders(OrderBookType::ask, p, previousTimeFrame );
         std::vector<OrderBookEntry> bidEntries = orderBook.getOrders(OrderBookType::bid, p, previousTimeFrame );
         //go through bid first

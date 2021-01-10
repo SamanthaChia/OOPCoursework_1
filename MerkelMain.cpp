@@ -412,7 +412,7 @@ void MerkelMain::generateBidWithPredictions(std::string productName, double pred
                 std::cout <<"Bid has been made " <<std::endl;
 
             } else{
-                std::cout<< "error because an order has already been made, new wallet value not updated. " << std::endl;
+                std::cout<< "error " << std::endl;
             }
         }  
     }
@@ -473,7 +473,7 @@ void MerkelMain::generateOfferWithPredictions(std::string productName, double pr
                     std::cout <<"Ask has been made " <<std::endl;
 
                 } else{
-                    std::cout<< "error because an order has already been made, new wallet value not updated. " << std::endl;
+                    std::cout<< "error " << std::endl;
                 }
             }  
         }
