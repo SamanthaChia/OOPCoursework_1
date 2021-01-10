@@ -30,8 +30,8 @@ class MerkelMain{
         void gotoNextTimeFrame();
         void procesUserOption(int userOption);
 
-        /** call to run generateDataHolder for 10 times and generatePredictions 
-         * for specified product
+        /** call to run generateDataHolder for 10 times to gather
+         * 10 dataholders
          */
         void automateGenerateDataHolder();
         void checkEligibleOrder();
