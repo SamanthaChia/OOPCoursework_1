@@ -15,7 +15,7 @@ class LinearRegression{
         void generateDataHolder(std::string currentTime, OrderBook orderBook);
 
         /** called to run linear regression predictions using productData
-         * calculations done here.
+         * calculations done here. returns the predicted value
         */
         double generatePredictions(std::vector<DataHolder> productData);        
 

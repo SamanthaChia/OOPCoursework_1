@@ -14,6 +14,7 @@ class OrderBookEntry{
                         std::string _product,
                         OrderBookType _orderType,
                         std::string username = "dataset");
+                        
         static OrderBookType stringToOrderBookType(std::string s);
         std::string orderBookTypeToString(OrderBookType obt);
         

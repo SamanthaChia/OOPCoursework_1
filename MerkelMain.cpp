@@ -149,24 +149,7 @@ void MerkelMain::printWallet(){
 }
 
 void MerkelMain::gotoNextTimeFrame(){
-    double costAfterMatching;
     std::cout << "Continue to next time step." << std::endl;
-    for(std::string p : orderBook.getKnownProducts())
-    {
-        std::cout << "Matching : " << p << std::endl;
-        std::vector<OrderBookEntry> sales = orderBook.matchAsksToBids(p, currentTime);
-        std::cout << "Sale number : " << sales.size() << std::endl;
-        for(OrderBookEntry& sale : sales)
-        {   
-            if(sale.username == "simuser")
-            {
-                wallet.processSale(sale);
-                costAfterMatching = sale.price * sale.amount;
-                std::cout << sale.product << " with the price : " << sale.price << ", amount : " << sale.amount << " cost : " << costAfterMatching << " was successful! " << std::endl;
-                logs.createSuccessfulSalesLogs(currentTime, sale, orderBook);
-            }
-        }
-    }
     currentTime = orderBook.getNextTime(currentTime);
 }
 
@@ -178,9 +161,10 @@ void MerkelMain::procesUserOption(int userOption){
         std::cout << "Starting MerkelrexBot " << std::endl;
         while(true){        
             automateGenerateDataHolder();
+            printWallet();
             logs.createAssetLogs(currentTime, wallet.toString());
             checkEligibleOrder();
-            printWallet();
+            previousTimeFrame = currentTime;
             gotoNextTimeFrame();
             nextCurrentTime = orderBook.getNextTime(currentTime);
             std::cout << "================ " << std::endl;
@@ -199,6 +183,8 @@ void MerkelMain::automateGenerateDataHolder(){
         currentTime = orderBook.getNextTime(currentTime);
         i++;
     }
+
+    orderBook.removeUnmatchedSales(orderBook ,previousTimeFrame);
 }
 
 void MerkelMain::checkEligibleOrder(){
@@ -400,6 +386,7 @@ void MerkelMain::generateBidWithPredictions(std::string productName, double pred
     if(wallet.canFulfillOrder(obe))
     {
         orderBook.insertOrder(obe);
+        matchAndProcessSale(obe);
         logs.createAllSalesLogs(currentTime, obe);
         std::cout <<"Bid has been made " <<std::endl;
 
@@ -420,17 +407,16 @@ void MerkelMain::generateBidWithPredictions(std::string productName, double pred
             };
             if(wallet.canFulfillOrder(obe)){
                 orderBook.insertOrder(obe);
+                matchAndProcessSale(obe);
                 logs.createAllSalesLogs(currentTime, obe);
                 std::cout <<"Bid has been made " <<std::endl;
 
             } else{
-                std::cout<< "error becaue an order has already been made, new wallet value not updated. " << std::endl;
+                std::cout<< "error because an order has already been made, new wallet value not updated. " << std::endl;
             }
         }  
     }
 }
-
-//remove the bid if a sale is not made. = matchAsksToBids fail
 
 void MerkelMain::generateOfferWithPredictions(std::string productName, double predictedVal){
     double predictions, walletAmount;
@@ -461,6 +447,7 @@ void MerkelMain::generateOfferWithPredictions(std::string productName, double pr
         if(wallet.canFulfillOrder(obe))
         {
             orderBook.insertOrder(obe);
+            matchAndProcessSale(obe);
             logs.createAllSalesLogs(currentTime, obe);
             std::cout <<"Ask has been made " <<std::endl;
         }else{
@@ -481,15 +468,32 @@ void MerkelMain::generateOfferWithPredictions(std::string productName, double pr
                 
                 if(wallet.canFulfillOrder(obe)){
                     orderBook.insertOrder(obe);
+                    matchAndProcessSale(obe);
                     logs.createAllSalesLogs(currentTime, obe);
                     std::cout <<"Ask has been made " <<std::endl;
 
                 } else{
-                    std::cout<< "error becaue an order has already been made, new wallet value not updated. " << std::endl;
+                    std::cout<< "error because an order has already been made, new wallet value not updated. " << std::endl;
                 }
             }  
         }
     } else{
         std::cout << "No order to be made." << std::endl;
+    }
+}
+
+void MerkelMain::matchAndProcessSale(OrderBookEntry obe){
+    double costAfterMatching;
+    
+    std::vector<OrderBookEntry> sales = orderBook.matchAsksToBids(obe.product, currentTime);
+    for(OrderBookEntry& sale : sales)
+    {   
+        if(sale.username == "simuser")
+        {
+            wallet.processSale(sale);
+            costAfterMatching = sale.price * sale.amount;
+            std::cout << sale.product << " with the price : " << sale.price << ", amount : " << sale.amount << " cost : " << costAfterMatching << " was successful! " << std::endl;
+            logs.createSuccessfulSalesLogs(currentTime, sale, orderBook);
+        }
     }
 }
