@@ -38,6 +38,10 @@ class MerkelMain{
         void generateBidWithPredictions(std::string productName, double predictedVal);
         void generateOfferWithPredictions(std::string productName, double predictedVal);
 
+        /** call this function to matchAskstoBids and also to process the sale */
+        void matchAndProcessSale(OrderBookEntry obe);
+
+        void removeUnmatchedSales();
 
         std::string currentTime, nextCurrentTime, previousTimeFrame;
 

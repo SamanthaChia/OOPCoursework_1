@@ -177,7 +177,6 @@ void MerkelMain::procesUserOption(int userOption){
 }
 
 void MerkelMain::automateGenerateDataHolder(){
-    int index = 0;
     //run for 10 times to obtain DataHolders.
     for(int i =0; i<10;){
         linearRegressionPrediction.generateDataHolder(currentTime, orderBook);
@@ -185,33 +184,7 @@ void MerkelMain::automateGenerateDataHolder(){
         i++;
     }
 
-    //before processing, remove previous simuser stuff
-    for(std::string const& p : orderBook.getKnownProducts()){
-        std::vector<OrderBookEntry> askEntries = orderBook.getOrders(OrderBookType::ask, p, previousTimeFrame );
-        std::vector<OrderBookEntry> bidEntries = orderBook.getOrders(OrderBookType::bid, p, previousTimeFrame );
-        //go through bid first
-        for(OrderBookEntry obe : bidEntries){
-            if(obe.username == "simuser"){
-                bidEntries.erase(bidEntries.begin() + index);
-                std::cout << obe.orderBookTypeToString(obe.orderType) << " for " << obe.product << " has been withdrawn from orderBook " << std::endl;
-            } else
-            {
-                index++;
-            }
-        }
-
-        //go through askEntries
-        for(OrderBookEntry obe: askEntries){
-            if(obe.username == "simuser"){
-                askEntries.erase(askEntries.begin() + index);
-                std::cout << obe.orderBookTypeToString(obe.orderType) << " for " << obe.product << " has been withdrawn from orderBook " << std::endl;
-
-            }else
-            {
-                index++;
-            }
-        }
-    }
+    removeUnmatchedSales();
 }
 
 void MerkelMain::checkEligibleOrder(){
@@ -383,7 +356,6 @@ void MerkelMain::checkEligibleOrder(){
 // predicted value = next value.
 void MerkelMain::generateBidWithPredictions(std::string productName, double predictedVal){
     double predictions, lowerThanPrediction, lowestPrice, bidAmount, walletAmount;
-    double costAfterMatching;
     std::vector<OrderBookEntry> entries;
     
     entries = orderBook.getOrders(OrderBookType::ask, productName, currentTime );
@@ -414,17 +386,7 @@ void MerkelMain::generateBidWithPredictions(std::string productName, double pred
     if(wallet.canFulfillOrder(obe))
     {
         orderBook.insertOrder(obe);
-        std::vector<OrderBookEntry> sales = orderBook.matchAsksToBids(obe.product, currentTime);
-        for(OrderBookEntry& sale : sales)
-        {   
-            if(sale.username == "simuser")
-            {
-                wallet.processSale(sale);
-                costAfterMatching = sale.price * sale.amount;
-                std::cout << sale.product << " with the price : " << sale.price << ", amount : " << sale.amount << " cost : " << costAfterMatching << " was successful! " << std::endl;
-                logs.createSuccessfulSalesLogs(currentTime, sale, orderBook);
-            }
-        }
+        matchAndProcessSale(obe);
         logs.createAllSalesLogs(currentTime, obe);
         std::cout <<"Bid has been made " <<std::endl;
 
@@ -445,17 +407,7 @@ void MerkelMain::generateBidWithPredictions(std::string productName, double pred
             };
             if(wallet.canFulfillOrder(obe)){
                 orderBook.insertOrder(obe);
-                std::vector<OrderBookEntry> sales = orderBook.matchAsksToBids(obe.product, currentTime);
-                for(OrderBookEntry& sale : sales)
-                {   
-                    if(sale.username == "simuser")
-                    {
-                        wallet.processSale(sale);
-                        costAfterMatching = sale.price * sale.amount;
-                        std::cout << sale.product << " with the price : " << sale.price << ", amount : " << sale.amount << " cost : " << costAfterMatching << " was successful! " << std::endl;
-                        logs.createSuccessfulSalesLogs(currentTime, sale, orderBook);
-                    }
-                }
+                matchAndProcessSale(obe);
                 logs.createAllSalesLogs(currentTime, obe);
                 std::cout <<"Bid has been made " <<std::endl;
 
@@ -468,7 +420,6 @@ void MerkelMain::generateBidWithPredictions(std::string productName, double pred
 
 void MerkelMain::generateOfferWithPredictions(std::string productName, double predictedVal){
     double predictions, walletAmount;
-    double costAfterMatching;
     double currentPrice, askingAmount = 0;
     std::vector<OrderBookEntry> entries;
 
@@ -496,17 +447,7 @@ void MerkelMain::generateOfferWithPredictions(std::string productName, double pr
         if(wallet.canFulfillOrder(obe))
         {
             orderBook.insertOrder(obe);
-            std::vector<OrderBookEntry> sales = orderBook.matchAsksToBids(obe.product, currentTime);
-            for(OrderBookEntry& sale : sales)
-            {   
-                if(sale.username == "simuser")
-                {
-                    wallet.processSale(sale);
-                    costAfterMatching = sale.price * sale.amount;
-                    std::cout << sale.product << " with the price : " << sale.price << ", amount : " << sale.amount << " cost : " << costAfterMatching << " was successful! " << std::endl;
-                    logs.createSuccessfulSalesLogs(currentTime, sale, orderBook);
-                }
-            }
+            matchAndProcessSale(obe);
             logs.createAllSalesLogs(currentTime, obe);
             std::cout <<"Ask has been made " <<std::endl;
         }else{
@@ -527,17 +468,7 @@ void MerkelMain::generateOfferWithPredictions(std::string productName, double pr
                 
                 if(wallet.canFulfillOrder(obe)){
                     orderBook.insertOrder(obe);
-                    std::vector<OrderBookEntry> sales = orderBook.matchAsksToBids(obe.product, currentTime);
-                    for(OrderBookEntry& sale : sales)
-                    {   
-                        if(sale.username == "simuser")
-                        {
-                            wallet.processSale(sale);
-                            costAfterMatching = sale.price * sale.amount;
-                            std::cout << sale.product << " with the price : " << sale.price << ", amount : " << sale.amount << " cost : " << costAfterMatching << " was successful! " << std::endl;
-                            logs.createSuccessfulSalesLogs(currentTime, sale, orderBook);
-                        }
-                    }
+                    matchAndProcessSale(obe);
                     logs.createAllSalesLogs(currentTime, obe);
                     std::cout <<"Ask has been made " <<std::endl;
 
@@ -548,5 +479,52 @@ void MerkelMain::generateOfferWithPredictions(std::string productName, double pr
         }
     } else{
         std::cout << "No order to be made." << std::endl;
+    }
+}
+
+void MerkelMain::matchAndProcessSale(OrderBookEntry obe){
+    double costAfterMatching;
+    
+    std::vector<OrderBookEntry> sales = orderBook.matchAsksToBids(obe.product, currentTime);
+    for(OrderBookEntry& sale : sales)
+    {   
+        if(sale.username == "simuser")
+        {
+            wallet.processSale(sale);
+            costAfterMatching = sale.price * sale.amount;
+            std::cout << sale.product << " with the price : " << sale.price << ", amount : " << sale.amount << " cost : " << costAfterMatching << " was successful! " << std::endl;
+            logs.createSuccessfulSalesLogs(currentTime, sale, orderBook);
+        }
+    }
+}
+
+void MerkelMain::removeUnmatchedSales(){
+    int index = 0;
+    //before processing, remove previous simuser stuff
+    for(std::string const& p : orderBook.getKnownProducts()){
+        std::vector<OrderBookEntry> askEntries = orderBook.getOrders(OrderBookType::ask, p, previousTimeFrame );
+        std::vector<OrderBookEntry> bidEntries = orderBook.getOrders(OrderBookType::bid, p, previousTimeFrame );
+        //go through bid first
+        for(OrderBookEntry obe : bidEntries){
+            if(obe.username == "simuser"){
+                bidEntries.erase(bidEntries.begin() + index);
+                std::cout << obe.orderBookTypeToString(obe.orderType) << " for " << obe.product << " has been withdrawn from orderBook " << std::endl;
+            } else
+            {
+                index++;
+            }
+        }
+
+        //go through askEntries
+        for(OrderBookEntry obe: askEntries){
+            if(obe.username == "simuser"){
+                askEntries.erase(askEntries.begin() + index);
+                std::cout << obe.orderBookTypeToString(obe.orderType) << " for " << obe.product << " has been withdrawn from orderBook " << std::endl;
+
+            }else
+            {
+                index++;
+            }
+        }
     }
 }
