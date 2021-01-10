@@ -29,6 +29,10 @@ class OrderBook
 
         static double getHighPrice(std::vector<OrderBookEntry>& orders);
         static double getLowPrice(std::vector<OrderBookEntry>& orders);
+
+        /** calculate the total in the given vector of orderbookentry.
+         * returns the total
+         */
         static double getTotalPrice(std::vector<OrderBookEntry>& orders);
 
         /** call this function to remove any unmatched salles from previous time frames*/
